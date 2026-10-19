@@ -1,0 +1,16 @@
+.DS_Store
+Build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.store
+*.store-*
+*.sqlite
+*.sqlite-*
+
+*.p12
+*.mobileprovision
+*.pem
+*.key
+.env
+.env.*
