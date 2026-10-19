@@ -1,0 +1,690 @@
+{
+  "按住顶部标题或空白处拖动窗口": {
+    "en": "Drag the title or empty header to move",
+    "zh-Hans": "按住顶部标题或空白处拖动窗口",
+    "ja": "タイトルや上部の空白をドラッグして移動",
+    "fr": "Faites glisser le titre ou le haut de la fenêtre",
+    "de": "Titel oder freien Kopfbereich zum Verschieben ziehen",
+    "ko": "제목이나 상단 빈 공간을 드래그하여 이동"
+  },
+  "已暂停": {
+    "en": "Paused",
+    "zh-Hans": "已暂停",
+    "ja": "一時停止中",
+    "fr": "En pause",
+    "de": "Pausiert",
+    "ko": "일시 정지"
+  },
+  "正在记录": {
+    "en": "Recording",
+    "zh-Hans": "正在记录",
+    "ja": "記録中",
+    "fr": "Enregistrement",
+    "de": "Aufnahme läuft",
+    "ko": "기록 중"
+  },
+  "设置": {
+    "en": "Settings",
+    "zh-Hans": "设置",
+    "ja": "設定",
+    "fr": "Réglages",
+    "de": "Einstellungen",
+    "ko": "설정"
+  },
+  "搜索复制过的内容…": {
+    "en": "Search clipboard history…",
+    "zh-Hans": "搜索复制过的内容…",
+    "ja": "履歴を検索…",
+    "fr": "Rechercher dans l’historique…",
+    "de": "Verlauf durchsuchen…",
+    "ko": "클립보드 기록 검색…"
+  },
+  "你的剪贴板": {
+    "en": "Clipboard history",
+    "zh-Hans": "你的剪贴板",
+    "ja": "クリップボード履歴",
+    "fr": "Historique du presse-papiers",
+    "de": "Zwischenablageverlauf",
+    "ko": "클립보드 기록"
+  },
+  "搜索结果": {
+    "en": "Search results",
+    "zh-Hans": "搜索结果",
+    "ja": "検索結果",
+    "fr": "Résultats",
+    "de": "Suchergebnisse",
+    "ko": "검색 결과"
+  },
+  "条数": {
+    "en": "%d items",
+    "zh-Hans": "%d 条",
+    "ja": "%d 件",
+    "fr": "%d éléments",
+    "de": "%d Einträge",
+    "ko": "%d개"
+  },
+  "复制一下，随时找回。": {
+    "en": "Copy now. Find it later.",
+    "zh-Hans": "复制一下，随时找回。",
+    "ja": "コピーした内容を、いつでも。",
+    "fr": "Copiez. Retrouvez quand vous voulez.",
+    "de": "Kopieren. Später wiederfinden.",
+    "ko": "복사한 내용을 언제든 다시 찾으세요."
+  },
+  "没有找到相关内容": {
+    "en": "No results found",
+    "zh-Hans": "没有找到相关内容",
+    "ja": "見つかりませんでした",
+    "fr": "Aucun résultat",
+    "de": "Keine Ergebnisse",
+    "ko": "검색 결과가 없습니다"
+  },
+  "复制文字或图片后，它们会出现在这里。\n所有历史仅保存在这台 Mac。": {
+    "en": "Copied text and images appear here.\nHistory stays on this Mac.",
+    "zh-Hans": "复制文字或图片后，它们会出现在这里。\n所有历史仅保存在这台 Mac。",
+    "ja": "コピーしたテキストや画像が表示されます。\n履歴はこの Mac にのみ保存されます。",
+    "fr": "Vos textes et images copiés apparaissent ici.\nL’historique reste sur ce Mac.",
+    "de": "Kopierte Texte und Bilder erscheinen hier.\nDer Verlauf bleibt auf diesem Mac.",
+    "ko": "복사한 텍스트와 이미지가 여기에 표시됩니다.\n기록은 이 Mac에만 저장됩니다."
+  },
+  "试试其他文字或应用名称。": {
+    "en": "Try another text or app name.",
+    "zh-Hans": "试试其他文字或应用名称。",
+    "ja": "別の文字やアプリ名をお試しください。",
+    "fr": "Essayez un autre texte ou nom d’app.",
+    "de": "Anderen Text oder App-Namen versuchen.",
+    "ko": "다른 텍스트나 앱 이름을 검색해 보세요."
+  },
+  "复制到剪贴板": {
+    "en": "Copy to clipboard",
+    "zh-Hans": "复制到剪贴板",
+    "ja": "クリップボードにコピー",
+    "fr": "Copier dans le presse-papiers",
+    "de": "In Zwischenablage kopieren",
+    "ko": "클립보드에 복사"
+  },
+  "取消固定": {
+    "en": "Unpin",
+    "zh-Hans": "取消固定",
+    "ja": "固定を解除",
+    "fr": "Détacher",
+    "de": "Loslösen",
+    "ko": "고정 해제"
+  },
+  "固定": {
+    "en": "Pin",
+    "zh-Hans": "固定",
+    "ja": "固定",
+    "fr": "Épingler",
+    "de": "Anheften",
+    "ko": "고정"
+  },
+  "删除": {
+    "en": "Delete",
+    "zh-Hans": "删除",
+    "ja": "削除",
+    "fr": "Supprimer",
+    "de": "Löschen",
+    "ko": "삭제"
+  },
+  "已复制，切回应用按 ⌘V 粘贴": {
+    "en": "Copied · Switch apps and press ⌘V",
+    "zh-Hans": "已复制，切回应用按 ⌘V 粘贴",
+    "ja": "コピー済み · アプリに戻り ⌘V",
+    "fr": "Copié · Revenez à l’app puis ⌘V",
+    "de": "Kopiert · Zur App wechseln, ⌘V",
+    "ko": "복사됨 · 앱으로 돌아가 ⌘V"
+  },
+  "点击查看 · ↩ 复制 · ⌘P 固定": {
+    "en": "Click to view · ↩ Copy · ⌘P Pin",
+    "zh-Hans": "点击查看 · ↩ 复制 · ⌘P 固定",
+    "ja": "クリックで表示 · ↩ コピー · ⌘P 固定",
+    "fr": "Voir · ↩ Copier · ⌘P Épingler",
+    "de": "Ansehen · ↩ Kopieren · ⌘P Anheften",
+    "ko": "클릭하여 보기 · ↩ 복사 · ⌘P 고정"
+  },
+  "esc 关闭": {
+    "en": "esc Close",
+    "zh-Hans": "esc 关闭",
+    "ja": "esc 閉じる",
+    "fr": "esc Fermer",
+    "de": "esc Schließen",
+    "ko": "esc 닫기"
+  },
+  "复制整条内容": {
+    "en": "Copy entire item",
+    "zh-Hans": "复制整条内容",
+    "ja": "項目全体をコピー",
+    "fr": "Copier tout l’élément",
+    "de": "Gesamten Eintrag kopieren",
+    "ko": "전체 항목 복사"
+  },
+  "通用": {
+    "en": "General",
+    "zh-Hans": "通用",
+    "ja": "一般",
+    "fr": "Général",
+    "de": "Allgemein",
+    "ko": "일반"
+  },
+  "暂停记录": {
+    "en": "Pause recording",
+    "zh-Hans": "暂停记录",
+    "ja": "記録を一時停止",
+    "fr": "Suspendre l’enregistrement",
+    "de": "Aufnahme pausieren",
+    "ko": "기록 일시 정지"
+  },
+  "登录时启动 Pasteback": {
+    "en": "Launch Pasteback at login",
+    "zh-Hans": "登录时启动 Pasteback",
+    "ja": "ログイン時に Pasteback を起動",
+    "fr": "Ouvrir Pasteback à la connexion",
+    "de": "Pasteback bei Anmeldung starten",
+    "ko": "로그인 시 Pasteback 실행"
+  },
+  "呼出历史面板": {
+    "en": "Open history",
+    "zh-Hans": "呼出历史面板",
+    "ja": "履歴を開く",
+    "fr": "Ouvrir l’historique",
+    "de": "Verlauf öffnen",
+    "ko": "기록 열기"
+  },
+  "初版使用固定快捷键。回车复制后，切回原应用按 ⌘V 粘贴。自动粘贴与快捷键录制将在下一阶段接入。": {
+    "en": "The shortcut is currently fixed. Return copies the item; switch back and press ⌘V to paste.",
+    "zh-Hans": "初版使用固定快捷键。回车复制后，切回原应用按 ⌘V 粘贴。自动粘贴与快捷键录制将在下一阶段接入。",
+    "ja": "現在、ショートカットは固定です。Return でコピーし、元のアプリで ⌘V を押して貼り付けます。",
+    "fr": "Le raccourci est fixe pour le moment. Entrée copie l’élément ; revenez à l’app et collez avec ⌘V.",
+    "de": "Das Tastenkürzel ist derzeit fest. Return kopiert; in der Ziel-App mit ⌘V einfügen.",
+    "ko": "현재 단축키는 고정되어 있습니다. Return으로 복사한 뒤 원래 앱에서 ⌘V로 붙여넣으세요."
+  },
+  "存储": {
+    "en": "Storage",
+    "zh-Hans": "存储",
+    "ja": "保存",
+    "fr": "Stockage",
+    "de": "Speicher",
+    "ko": "저장 공간"
+  },
+  "历史数量上限": {
+    "en": "History limit",
+    "zh-Hans": "历史数量上限",
+    "ja": "履歴の上限",
+    "fr": "Limite de l’historique",
+    "de": "Verlaufslimit",
+    "ko": "기록 개수 제한"
+  },
+  "清空全部历史…": {
+    "en": "Clear all history…",
+    "zh-Hans": "清空全部历史…",
+    "ja": "すべての履歴を削除…",
+    "fr": "Effacer tout l’historique…",
+    "de": "Gesamten Verlauf löschen…",
+    "ko": "모든 기록 지우기…"
+  },
+  "隐私": {
+    "en": "Privacy",
+    "zh-Hans": "隐私",
+    "ja": "プライバシー",
+    "fr": "Confidentialité",
+    "de": "Datenschutz",
+    "ko": "개인정보 보호"
+  },
+  "记录图片": {
+    "en": "Save images",
+    "zh-Hans": "记录图片",
+    "ja": "画像を記録",
+    "fr": "Enregistrer les images",
+    "de": "Bilder speichern",
+    "ko": "이미지 기록"
+  },
+  "忽略的应用 Bundle ID（每行一个）": {
+    "en": "Excluded app bundle IDs (one per line)",
+    "zh-Hans": "忽略的应用 Bundle ID（每行一个）",
+    "ja": "記録しないアプリの Bundle ID（1 行に 1 つ）",
+    "fr": "Identifiants des apps ignorées (un par ligne)",
+    "de": "Ignorierte App-Bundle-IDs (eine pro Zeile)",
+    "ko": "제외할 앱 Bundle ID (한 줄에 하나)"
+  },
+  "仅存本机 · 不联网 · 不上传": {
+    "en": "History stays local · No history uploads",
+    "zh-Hans": "历史仅存本机 · 不上传历史",
+    "ja": "履歴はローカル保存 · 履歴の送信なし",
+    "fr": "Historique local · Aucun envoi d’historique",
+    "de": "Verlauf nur lokal · Kein Verlauf-Upload",
+    "ko": "기록은 로컬에만 저장 · 기록 업로드 없음"
+  },
+  "清空全部历史？": {
+    "en": "Clear all history?",
+    "zh-Hans": "清空全部历史？",
+    "ja": "すべての履歴を削除しますか？",
+    "fr": "Effacer tout l’historique ?",
+    "de": "Gesamten Verlauf löschen?",
+    "ko": "모든 기록을 지울까요?"
+  },
+  "取消": {
+    "en": "Cancel",
+    "zh-Hans": "取消",
+    "ja": "キャンセル",
+    "fr": "Annuler",
+    "de": "Abbrechen",
+    "ko": "취소"
+  },
+  "清空": {
+    "en": "Clear",
+    "zh-Hans": "清空",
+    "ja": "削除",
+    "fr": "Effacer",
+    "de": "Löschen",
+    "ko": "지우기"
+  },
+  "包括固定条目，此操作无法撤销。": {
+    "en": "Includes pinned items. Cannot be undone. The current clipboard is unchanged.",
+    "zh-Hans": "包括固定条目，无法撤销；当前系统剪贴板保持不变。",
+    "ja": "固定項目も削除します。取り消せません。現在のクリップボードは変更しません。",
+    "fr": "Inclut les éléments épinglés. Action irréversible. Le presse-papiers actuel reste inchangé.",
+    "de": "Auch angeheftete Einträge werden gelöscht. Nicht rückgängig zu machen. Die aktuelle Zwischenablage bleibt unverändert.",
+    "ko": "고정 항목도 포함되며 되돌릴 수 없습니다. 현재 클립보드는 변경되지 않습니다."
+  },
+  "文字内容": {
+    "en": "Text preview",
+    "zh-Hans": "文字内容",
+    "ja": "テキストのプレビュー",
+    "fr": "Aperçu du texte",
+    "de": "Textvorschau",
+    "ko": "텍스트 미리보기"
+  },
+  "图片内容": {
+    "en": "Image preview",
+    "zh-Hans": "图片内容",
+    "ja": "画像のプレビュー",
+    "fr": "Aperçu de l’image",
+    "de": "Bildvorschau",
+    "ko": "이미지 미리보기"
+  },
+  "完成": {
+    "en": "Done",
+    "zh-Hans": "完成",
+    "ja": "完了",
+    "fr": "Terminé",
+    "de": "Fertig",
+    "ko": "완료"
+  },
+  "拖选文字后按 ⌘C 可复制选中部分。": {
+    "en": "Select text, then press ⌘C to copy just that part.",
+    "zh-Hans": "拖选文字后按 ⌘C 可复制选中部分。",
+    "ja": "文字を選択して ⌘C を押すと、その部分だけコピーできます。",
+    "fr": "Sélectionnez le texte, puis ⌘C pour copier cette partie.",
+    "de": "Text markieren, dann mit ⌘C nur diesen Teil kopieren.",
+    "ko": "텍스트를 선택한 뒤 ⌘C를 누르면 해당 부분만 복사됩니다."
+  },
+  "点击下方按钮复制原始图片。": {
+    "en": "Use the button below to copy the original image.",
+    "zh-Hans": "点击下方按钮复制原始图片。",
+    "ja": "下のボタンで元の画像をコピーします。",
+    "fr": "Le bouton ci-dessous copie l’image originale.",
+    "de": "Mit der Schaltfläche unten das Originalbild kopieren.",
+    "ko": "아래 버튼으로 원본 이미지를 복사하세요."
+  },
+  "已复制 ✓": {
+    "en": "Copied ✓",
+    "zh-Hans": "已复制 ✓",
+    "ja": "コピー済み ✓",
+    "fr": "Copié ✓",
+    "de": "Kopiert ✓",
+    "ko": "복사됨 ✓"
+  },
+  "复制全部": {
+    "en": "Copy all",
+    "zh-Hans": "复制全部",
+    "ja": "すべてコピー",
+    "fr": "Tout copier",
+    "de": "Alles kopieren",
+    "ko": "전체 복사"
+  },
+  "来源应用": {
+    "en": "Source app",
+    "zh-Hans": "来源应用",
+    "ja": "コピー元のアプリ",
+    "fr": "App source",
+    "de": "Quell-App",
+    "ko": "원본 앱"
+  },
+  "来源格式": {
+    "en": "From: %@",
+    "zh-Hans": "来自：%@",
+    "ja": "コピー元：%@",
+    "fr": "Source : %@",
+    "de": "Quelle: %@",
+    "ko": "원본: %@"
+  },
+  "语言": {
+    "en": "Language",
+    "zh-Hans": "语言",
+    "ja": "言語",
+    "fr": "Langue",
+    "de": "Sprache",
+    "ko": "언어"
+  },
+  "跟随系统": {
+    "en": "System default",
+    "zh-Hans": "跟随系统",
+    "ja": "システムに従う",
+    "fr": "Langue du système",
+    "de": "Systemsprache",
+    "ko": "시스템 언어"
+  },
+  "语言说明": {
+    "en": "Matches your Mac’s preferred languages. Falls back to English. No location access is needed.",
+    "zh-Hans": "按 Mac 的首选语言自动匹配，不支持时使用英语；无需获取位置。",
+    "ja": "Mac の優先言語に従い、対応しない場合は英語になります。位置情報は取得しません。",
+    "fr": "Suit les langues préférées du Mac, sinon utilise l’anglais. Aucun accès à la localisation.",
+    "de": "Folgt den bevorzugten Mac-Sprachen, sonst Englisch. Kein Standortzugriff nötig.",
+    "ko": "Mac의 선호 언어를 따르며 지원하지 않으면 영어를 사용합니다. 위치 정보는 필요하지 않습니다."
+  },
+  "本地数据说明": {
+    "en": "History stays in this Mac’s Application Support folder, separate from the source project in iCloud Drive. Pasteback does not upload or sync it.",
+    "zh-Hans": "历史保存在这台 Mac 的应用支持目录，与 iCloud 云盘中的源码项目分开。Pasteback 不上传、不同步历史。",
+    "ja": "履歴はこの Mac の Application Support に保存され、iCloud Drive のソースとは別です。アップロードや同期は行いません。",
+    "fr": "L’historique reste dans Application Support sur ce Mac, séparé du projet dans iCloud Drive. Pasteback ne l’envoie ni ne le synchronise.",
+    "de": "Der Verlauf liegt lokal in Application Support, getrennt vom Quellprojekt in iCloud Drive. Pasteback lädt ihn nicht hoch und synchronisiert ihn nicht.",
+    "ko": "기록은 이 Mac의 Application Support에 저장되며 iCloud Drive의 소스 프로젝트와 분리됩니다. Pasteback은 기록을 업로드하거나 동기화하지 않습니다."
+  },
+  "保护范围说明": {
+    "en": "Sensitive clipboard flags and excluded apps are skipped. Unmarked passwords may still be saved. History is not encrypted by Pasteback; software running as your account may be able to read it.",
+    "zh-Hans": "会跳过敏感标记及黑名单应用的内容，但未标记的密码仍可能被记录。历史目前未经 Pasteback 加密；以你的账户运行的软件仍可能读取。",
+    "ja": "機密フラグや除外アプリは記録しません。未指定のパスワードは記録される場合があります。履歴は暗号化されておらず、同じユーザーのソフトから読まれる可能性があります。",
+    "fr": "Les contenus marqués sensibles et les apps exclues sont ignorés. Un mot de passe non marqué peut être enregistré. Pasteback ne chiffre pas l’historique ; un logiciel exécuté sous votre compte pourrait le lire.",
+    "de": "Sensible Markierungen und ausgeschlossene Apps werden übersprungen. Unmarkierte Passwörter können gespeichert werden. Pasteback verschlüsselt den Verlauf nicht; Software unter Ihrem Konto könnte ihn lesen.",
+    "ko": "민감 표시가 있거나 제외된 앱의 내용은 기록하지 않습니다. 표시되지 않은 비밀번호는 저장될 수 있습니다. Pasteback은 기록을 암호화하지 않으며 같은 사용자 계정의 프로그램이 읽을 수 있습니다."
+  },
+  "打开本地数据文件夹": {
+    "en": "Show local data folder",
+    "zh-Hans": "打开本地数据文件夹",
+    "ja": "ローカルデータフォルダを開く",
+    "fr": "Afficher le dossier local",
+    "de": "Lokalen Datenordner anzeigen",
+    "ko": "로컬 데이터 폴더 열기"
+  },
+  "继续记录": {
+    "en": "Resume recording",
+    "zh-Hans": "继续记录",
+    "ja": "記録を再開",
+    "fr": "Reprendre l’enregistrement",
+    "de": "Aufnahme fortsetzen",
+    "ko": "기록 재개"
+  },
+  "打开 Pasteback  ⌘⇧V": {
+    "en": "Open Pasteback  ⌘⇧V",
+    "zh-Hans": "打开 Pasteback  ⌘⇧V",
+    "ja": "Pasteback を開く  ⌘⇧V",
+    "fr": "Ouvrir Pasteback  ⌘⇧V",
+    "de": "Pasteback öffnen  ⌘⇧V",
+    "ko": "Pasteback 열기  ⌘⇧V"
+  },
+  "退出 Pasteback": {
+    "en": "Quit Pasteback",
+    "zh-Hans": "退出 Pasteback",
+    "ja": "Pasteback を終了",
+    "fr": "Quitter Pasteback",
+    "de": "Pasteback beenden",
+    "ko": "Pasteback 종료"
+  },
+  "Pasteback 设置": {
+    "en": "Pasteback Settings",
+    "zh-Hans": "Pasteback 设置",
+    "ja": "Pasteback 設定",
+    "fr": "Réglages Pasteback",
+    "de": "Pasteback Einstellungen",
+    "ko": "Pasteback 설정"
+  },
+  "无法打开 Pasteback 历史库": {
+    "en": "Could not open Pasteback history",
+    "zh-Hans": "无法打开 Pasteback 历史库",
+    "ja": "Pasteback の履歴を開けません",
+    "fr": "Impossible d’ouvrir l’historique Pasteback",
+    "de": "Pasteback-Verlauf konnte nicht geöffnet werden",
+    "ko": "Pasteback 기록을 열 수 없습니다"
+  },
+  "⌘⇧V 已被其他应用占用，请使用菜单栏打开。": {
+    "en": "⌘⇧V is unavailable. Open Pasteback from the menu bar.",
+    "zh-Hans": "⌘⇧V 已被其他应用占用，请使用菜单栏打开。",
+    "ja": "⌘⇧V は使用できません。メニューバーから開いてください。",
+    "fr": "⌘⇧V indisponible. Ouvrez Pasteback depuis la barre des menus.",
+    "de": "⌘⇧V ist nicht verfügbar. Pasteback über die Menüleiste öffnen.",
+    "ko": "⌘⇧V를 사용할 수 없습니다. 메뉴 막대에서 Pasteback을 여세요."
+  },
+  "图片文件无法读取": {
+    "en": "Unable to read the image file",
+    "zh-Hans": "图片文件无法读取",
+    "ja": "画像ファイルを読み込めません",
+    "fr": "Impossible de lire le fichier image",
+    "de": "Bilddatei kann nicht gelesen werden",
+    "ko": "이미지 파일을 읽을 수 없습니다"
+  },
+  "未知应用": {
+    "en": "Unknown app",
+    "zh-Hans": "未知应用",
+    "ja": "不明なアプリ",
+    "fr": "App inconnue",
+    "de": "Unbekannte App",
+    "ko": "알 수 없는 앱"
+  },
+  "最近复制在前": {
+    "en": "Newest first",
+    "zh-Hans": "最近复制在前",
+    "ja": "新しい順",
+    "fr": "Plus récent d’abord",
+    "de": "Neueste zuerst",
+    "ko": "최신순"
+  },
+  "清理": {
+    "en": "Clear",
+    "zh-Hans": "清理",
+    "ja": "消去",
+    "fr": "Effacer",
+    "de": "Leeren",
+    "ko": "지우기"
+  },
+  "清空当前剪贴板…": {
+    "en": "Clear current clipboard…",
+    "zh-Hans": "清空当前剪贴板…",
+    "ja": "現在のクリップボードを消去…",
+    "fr": "Vider le presse-papiers actuel…",
+    "de": "Aktuelle Zwischenablage leeren…",
+    "ko": "현재 클립보드 지우기…"
+  },
+  "清空历史和剪贴板…": {
+    "en": "Clear history and clipboard…",
+    "zh-Hans": "清空历史和剪贴板…",
+    "ja": "履歴とクリップボードを消去…",
+    "fr": "Effacer l’historique et le presse-papiers…",
+    "de": "Verlauf und Zwischenablage leeren…",
+    "ko": "기록 및 클립보드 지우기…"
+  },
+  "清空当前剪贴板？": {
+    "en": "Clear current clipboard?",
+    "zh-Hans": "清空当前剪贴板？",
+    "ja": "現在のクリップボードを消去しますか？",
+    "fr": "Vider le presse-papiers actuel ?",
+    "de": "Aktuelle Zwischenablage leeren?",
+    "ko": "현재 클립보드를 지울까요?"
+  },
+  "清空历史和剪贴板？": {
+    "en": "Clear history and clipboard?",
+    "zh-Hans": "清空历史和剪贴板？",
+    "ja": "履歴とクリップボードを消去しますか？",
+    "fr": "Effacer l’historique et le presse-papiers ?",
+    "de": "Verlauf und Zwischenablage leeren?",
+    "ko": "기록과 클립보드를 지울까요?"
+  },
+  "只清空当前系统剪贴板，历史记录仍然保留。": {
+    "en": "Only the current system clipboard is cleared. History is kept.",
+    "zh-Hans": "只清空当前系统剪贴板，历史记录仍然保留。",
+    "ja": "現在のクリップボードのみ消去します。履歴は残ります。",
+    "fr": "Seul le presse-papiers actuel sera vidé. L’historique est conservé.",
+    "de": "Nur die aktuelle Zwischenablage wird geleert. Der Verlauf bleibt erhalten.",
+    "ko": "현재 시스템 클립보드만 지워집니다. 기록은 유지됩니다."
+  },
+  "删除全部历史（包括固定项）并清空当前系统剪贴板，无法撤销。": {
+    "en": "Deletes all history, including pinned items, and clears the current clipboard. Cannot be undone.",
+    "zh-Hans": "删除全部历史（包括固定项）并清空当前系统剪贴板，无法撤销。",
+    "ja": "固定項目を含むすべての履歴と現在のクリップボードを消去します。取り消せません。",
+    "fr": "Supprime tout l’historique, éléments épinglés inclus, et vide le presse-papiers actuel. Action irréversible.",
+    "de": "Löscht den gesamten Verlauf einschließlich angehefteter Einträge und leert die aktuelle Zwischenablage. Nicht rückgängig zu machen.",
+    "ko": "고정 항목을 포함한 모든 기록과 현재 클립보드를 지웁니다. 되돌릴 수 없습니다."
+  },
+  "删除这条历史？": {
+    "en": "Delete this item?",
+    "zh-Hans": "删除这条历史？",
+    "ja": "この履歴を削除しますか？",
+    "fr": "Supprimer cet élément ?",
+    "de": "Diesen Eintrag löschen?",
+    "ko": "이 항목을 삭제할까요?"
+  },
+  "删除说明": {
+    "en": "Removes this item from history. The current system clipboard is unchanged.",
+    "zh-Hans": "从历史中删除此项，当前系统剪贴板保持不变。",
+    "ja": "この項目を履歴から削除します。現在のクリップボードは変更しません。",
+    "fr": "Supprime cet élément de l’historique sans modifier le presse-papiers actuel.",
+    "de": "Entfernt diesen Eintrag aus dem Verlauf. Die aktuelle Zwischenablage bleibt unverändert.",
+    "ko": "기록에서 이 항목을 삭제합니다. 현재 시스템 클립보드는 변경되지 않습니다."
+  },
+  "正在导入…": {
+    "en": "Importing…",
+    "zh-Hans": "正在导入…",
+    "ja": "読み込み中…",
+    "fr": "Importation…",
+    "de": "Wird importiert…",
+    "ko": "가져오는 중…"
+  },
+  "剪贴板数据尚未就绪，请重新复制。": {
+    "en": "Clipboard data is not ready. Please copy again.",
+    "zh-Hans": "剪贴板数据尚未就绪，请重新复制。",
+    "ja": "クリップボードのデータを取得できません。もう一度コピーしてください。",
+    "fr": "Données du presse-papiers indisponibles. Copiez à nouveau.",
+    "de": "Zwischenablagedaten nicht bereit. Bitte erneut kopieren.",
+    "ko": "클립보드 데이터가 준비되지 않았습니다. 다시 복사해 주세요."
+  },
+  "内容过大，未记录：图片最多128MB，文字最多2MB。": {
+    "en": "Not saved: images must be under 128 MB and text under 2 MB.",
+    "zh-Hans": "内容过大，未记录：图片最多128MB，文字最多2MB。",
+    "ja": "保存できません。画像は128 MB以下、テキストは2 MB以下です。",
+    "fr": "Non enregistré : images de 128 Mo max, texte de 2 Mo max.",
+    "de": "Nicht gespeichert: Bilder max. 128 MB, Text max. 2 MB.",
+    "ko": "저장하지 못했습니다. 이미지는 최대 128 MB, 텍스트는 최대 2 MB입니다."
+  },
+  "待处理内容过多，请稍候再复制。": {
+    "en": "Import queue is full. Please wait, then copy again.",
+    "zh-Hans": "待处理内容过多，请稍候再复制。",
+    "ja": "処理待ちが多すぎます。少し待ってからコピーしてください。",
+    "fr": "File d’importation pleine. Patientez puis copiez à nouveau.",
+    "de": "Importwarteschlange voll. Bitte warten und erneut kopieren.",
+    "ko": "처리 대기열이 가득 찼습니다. 잠시 후 다시 복사해 주세요."
+  },
+  "固定条目不自动清理。单张图片最多 128 MB，文字最多 2 MB。": {
+    "en": "Pinned items are kept. Images: up to 128 MB; text: up to 2 MB.",
+    "zh-Hans": "固定条目不自动清理。单张图片最多 128 MB，文字最多 2 MB。",
+    "ja": "固定項目は自動削除されません。画像は最大128 MB、テキストは最大2 MB。",
+    "fr": "Les éléments épinglés sont conservés. Images : 128 Mo max ; texte : 2 Mo max.",
+    "de": "Angeheftete Einträge bleiben erhalten. Bilder: max. 128 MB; Text: max. 2 MB.",
+    "ko": "고정 항목은 유지됩니다. 이미지 최대 128 MB, 텍스트 최대 2 MB."
+  },
+  "检查更新…": {
+    "en": "Check for Updates…",
+    "zh-Hans": "检查更新…",
+    "ja": "アップデートを確認…",
+    "fr": "Rechercher des mises à jour…",
+    "de": "Nach Updates suchen…",
+    "ko": "업데이트 확인…"
+  },
+  "正在检查…": {
+    "en": "Checking…",
+    "zh-Hans": "正在检查…",
+    "ja": "確認中…",
+    "fr": "Recherche…",
+    "de": "Wird geprüft…",
+    "ko": "확인 중…"
+  },
+  "版本与更新": {
+    "en": "Version & Updates",
+    "zh-Hans": "版本与更新",
+    "ja": "バージョンと更新",
+    "fr": "Version et mises à jour",
+    "de": "Version und Updates",
+    "ko": "버전 및 업데이트"
+  },
+  "检查更新隐私说明": {
+    "en": "Only checks GitHub when you click. Sends no clipboard history. Downloads open in your browser; installation is manual.",
+    "zh-Hans": "仅在点击时访问 GitHub 检查版本，不发送剪贴板历史。在浏览器下载后手动安装。",
+    "ja": "クリック時のみ GitHub に確認します。履歴は送信しません。ダウンロードはブラウザで開き、手動でインストールします。",
+    "fr": "Consulte GitHub uniquement à votre demande, sans envoyer l’historique. Téléchargement dans le navigateur, installation manuelle.",
+    "de": "Prüft GitHub nur auf Klick, ohne den Verlauf zu senden. Download im Browser, Installation manuell.",
+    "ko": "클릭할 때만 GitHub를 확인합니다. 기록은 전송하지 않습니다. 브라우저에서 다운로드하고 직접 설치합니다."
+  },
+  "尚无可用版本": {
+    "en": "No release available yet",
+    "zh-Hans": "尚无可用版本",
+    "ja": "公開版はまだありません",
+    "fr": "Aucune version disponible",
+    "de": "Noch keine Version verfügbar",
+    "ko": "아직 공개된 버전이 없습니다"
+  },
+  "请稍后再检查更新。": {
+    "en": "Please check again later.",
+    "zh-Hans": "请稍后再检查更新。",
+    "ja": "後でもう一度確認してください。",
+    "fr": "Réessayez plus tard.",
+    "de": "Bitte später erneut prüfen.",
+    "ko": "나중에 다시 확인해 주세요."
+  },
+  "发现新版本": {
+    "en": "New version available",
+    "zh-Hans": "发现新版本",
+    "ja": "新しいバージョンがあります",
+    "fr": "Nouvelle version disponible",
+    "de": "Neue Version verfügbar",
+    "ko": "새 버전이 있습니다"
+  },
+  "更新下载安装说明": {
+    "en": "Open the release page, download the update, quit Pasteback, then replace the app in Applications. Your local history is kept.",
+    "zh-Hans": "前往发布页下载安装包，退出 Pasteback 后替换“应用程序”中的 App；本机历史保留。",
+    "ja": "公開ページで更新版をダウンロードし、Pasteback を終了してアプリを置き換えてください。ローカル履歴は保持されます。",
+    "fr": "Téléchargez la mise à jour, quittez Pasteback et remplacez l’app dans Applications. L’historique local est conservé.",
+    "de": "Update herunterladen, Pasteback beenden und die App in Programme ersetzen. Der lokale Verlauf bleibt erhalten.",
+    "ko": "릴리스 페이지에서 업데이트를 다운로드한 후 Pasteback을 종료하고 응용 프로그램 폴더의 앱을 교체하세요. 로컬 기록은 유지됩니다."
+  },
+  "前往下载": {
+    "en": "Open Download Page",
+    "zh-Hans": "前往下载",
+    "ja": "ダウンロードページへ",
+    "fr": "Ouvrir le téléchargement",
+    "de": "Downloadseite öffnen",
+    "ko": "다운로드 페이지 열기"
+  },
+  "已经是最新版本": {
+    "en": "You’re up to date",
+    "zh-Hans": "已经是最新版本",
+    "ja": "最新バージョンです",
+    "fr": "Vous êtes à jour",
+    "de": "Bereits aktuell",
+    "ko": "최신 버전입니다"
+  },
+  "暂时无法检查更新": {
+    "en": "Unable to check for updates",
+    "zh-Hans": "暂时无法检查更新",
+    "ja": "更新を確認できません",
+    "fr": "Impossible de vérifier les mises à jour",
+    "de": "Updates konnten nicht geprüft werden",
+    "ko": "업데이트를 확인할 수 없습니다"
+  },
+  "请检查网络后重试。": {
+    "en": "Check your connection and try again.",
+    "zh-Hans": "请检查网络后重试。",
+    "ja": "ネットワークを確認して再試行してください。",
+    "fr": "Vérifiez la connexion et réessayez.",
+    "de": "Netzwerk prüfen und erneut versuchen.",
+    "ko": "네트워크를 확인하고 다시 시도하세요."
+  }
+}
