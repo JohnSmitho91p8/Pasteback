@@ -902,5 +902,45 @@
     "fr": "Seules les références sont enregistrées. Recopiez les fichiers déplacés ou supprimés.",
     "de": "Nur Verweise werden gespeichert. Verschobene oder gelöschte Dateien erneut kopieren.",
     "ko": "참조만 저장됩니다. 원본을 이동하거나 삭제하면 다시 복사해야 합니다."
+  },
+  "预览方式": {
+    "zh-Hans": "预览方式",
+    "en": "Preview mode",
+    "ja": "プレビュー形式",
+    "fr": "Mode d’aperçu",
+    "de": "Vorschaumodus",
+    "ko": "미리보기 모드"
+  },
+  "自动识别": {
+    "zh-Hans": "自动识别",
+    "en": "Automatic",
+    "ja": "自動認識",
+    "fr": "Automatique",
+    "de": "Automatisch",
+    "ko": "자동 감지"
+  },
+  "纯文本": {
+    "zh-Hans": "纯文本",
+    "en": "Plain text",
+    "ja": "プレーンテキスト",
+    "fr": "Texte brut",
+    "de": "Klartext",
+    "ko": "일반 텍스트"
+  },
+  "保留原始缩进 · Tab 宽度 4 · 复制内容不变": {
+    "zh-Hans": "保留原始缩进 · Tab 宽度 4 · 复制内容不变",
+    "en": "Original indentation · Tab width 4 · Copies stay unchanged",
+    "ja": "元のインデント · タブ幅 4 · コピー内容は変更なし",
+    "fr": "Indentation d’origine · Tabulation 4 · Copie inchangée",
+    "de": "Originaleinzug · Tabulatorbreite 4 · Kopie unverändert",
+    "ko": "원래 들여쓰기 · 탭 너비 4 · 복사 내용 유지"
+  },
+  "内容较长，仅预览前十万字符；复制全部仍保留完整内容。": {
+    "zh-Hans": "内容较长，仅预览前十万字符；复制全部仍保留完整内容。",
+    "en": "Preview limited to 100,000 characters. Copy All keeps the complete content.",
+    "ja": "先頭10万文字のみ表示します。「すべてコピー」は全文を保持します。",
+    "fr": "Aperçu limité à 100 000 caractères. Tout copier conserve le contenu intégral.",
+    "de": "Vorschau auf 100.000 Zeichen begrenzt. Alles kopieren erhält den vollständigen Inhalt.",
+    "ko": "미리보기는 10만 자로 제한됩니다. 전체 복사는 모든 내용을 유지합니다."
   }
 }
