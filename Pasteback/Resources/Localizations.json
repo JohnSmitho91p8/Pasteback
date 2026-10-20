@@ -694,5 +694,213 @@
     "fr": "Retour à l’historique",
     "de": "Zurück zum Verlauf",
     "ko": "기록으로 돌아가기"
+  },
+  "文件过多，仅记录前200个。": {
+    "en": "Only the first 200 files were recorded.",
+    "zh-Hans": "文件过多，仅记录前200个。",
+    "ja": "先頭の200ファイルのみ記録しました。",
+    "fr": "Seuls les 200 premiers fichiers ont été enregistrés.",
+    "de": "Nur die ersten 200 Dateien wurden erfasst.",
+    "ko": "처음 200개 파일만 기록했습니다."
+  },
+  "文件已不存在，仍可复制路径。": {
+    "en": "Files are missing. You can still copy their paths.",
+    "zh-Hans": "文件已不存在，仍可复制路径。",
+    "ja": "ファイルが見つかりません。パスはコピーできます。",
+    "fr": "Fichiers introuvables. Vous pouvez encore copier leurs chemins.",
+    "de": "Dateien fehlen. Die Pfade können weiterhin kopiert werden.",
+    "ko": "파일이 없습니다. 경로는 복사할 수 있습니다."
+  },
+  "文件已不存在": {
+    "en": "File no longer exists",
+    "zh-Hans": "文件已不存在",
+    "ja": "ファイルが見つかりません",
+    "fr": "Le fichier n’existe plus",
+    "de": "Datei nicht mehr vorhanden",
+    "ko": "파일이 더 이상 없습니다"
+  },
+  "自动粘贴需要辅助功能权限": {
+    "en": "Auto-paste needs Accessibility permission",
+    "zh-Hans": "自动粘贴需要辅助功能权限",
+    "ja": "自動貼り付けにはアクセシビリティ権限が必要です",
+    "fr": "Le collage automatique nécessite l’autorisation Accessibilité",
+    "de": "Automatisches Einfügen benötigt Bedienungshilfen-Zugriff",
+    "ko": "자동 붙여넣기에 손쉬운 사용 권한이 필요합니다"
+  },
+  "权限仅用于把选中内容粘贴到原应用。请在系统设置授权后重新开启；未授权时仅复制。": {
+    "en": "Permission is used to paste into the original app. Grant access in System Settings, then enable this again. Without permission, items are only copied.",
+    "zh-Hans": "权限仅用于把选中内容粘贴到原应用。请在系统设置授权后重新开启；未授权时仅复制。",
+    "ja": "元のアプリへの貼り付けに使用します。システム設定で許可してから再度有効にしてください。未許可時はコピーのみです。",
+    "fr": "Cette autorisation sert à coller dans l’application d’origine. Accordez-la dans Réglages Système, puis réactivez cette option. Sans autorisation, seul le copier fonctionne.",
+    "de": "Der Zugriff dient dem Einfügen in die ursprüngliche App. In den Systemeinstellungen erlauben und erneut aktivieren. Ohne Zugriff wird nur kopiert.",
+    "ko": "원래 앱에 붙여넣는 데 사용됩니다. 시스템 설정에서 허용한 후 다시 켜세요. 권한이 없으면 복사만 합니다."
+  },
+  "打开系统设置": {
+    "en": "Open System Settings",
+    "zh-Hans": "打开系统设置",
+    "ja": "システム設定を開く",
+    "fr": "Ouvrir Réglages Système",
+    "de": "Systemeinstellungen öffnen",
+    "ko": "시스템 설정 열기"
+  },
+  "辅助功能权限不可用，已恢复只复制。请授权后重新开启自动粘贴。": {
+    "en": "Accessibility permission is unavailable. Copy-only mode restored. Grant permission and re-enable auto-paste.",
+    "zh-Hans": "辅助功能权限不可用，已恢复只复制。请授权后重新开启自动粘贴。",
+    "ja": "権限がありません。コピーのみに戻りました。許可後に再度有効にしてください。",
+    "fr": "Autorisation indisponible. Retour au copier seul. Autorisez puis réactivez le collage automatique.",
+    "de": "Bedienungshilfen-Zugriff fehlt. Es wird nur kopiert. Nach Freigabe erneut aktivieren.",
+    "ko": "권한이 없어 복사 전용으로 돌아갔습니다. 권한을 허용한 후 다시 켜세요."
+  },
+  "检测到安全输入，仅复制，未自动粘贴。": {
+    "en": "Secure input detected. Copied without automatic pasting.",
+    "zh-Hans": "检测到安全输入，仅复制，未自动粘贴。",
+    "ja": "セキュア入力のため、自動貼り付けせずコピーしました。",
+    "fr": "Saisie sécurisée détectée. Copié sans collage automatique.",
+    "de": "Sichere Eingabe erkannt. Nur kopiert, nicht automatisch eingefügt.",
+    "ko": "보안 입력이 감지되어 자동 붙여넣기 없이 복사했습니다."
+  },
+  "原应用不可用，内容已复制，请手动粘贴。": {
+    "en": "Original app unavailable. Content copied; paste manually.",
+    "zh-Hans": "原应用不可用，内容已复制，请手动粘贴。",
+    "ja": "元のアプリが利用できません。手動で貼り付けてください。",
+    "fr": "Application d’origine indisponible. Contenu copié ; collez manuellement.",
+    "de": "Ursprüngliche App nicht verfügbar. Inhalt kopiert; bitte manuell einfügen.",
+    "ko": "원래 앱을 사용할 수 없습니다. 복사된 내용을 수동으로 붙여넣으세요."
+  },
+  "未能确认粘贴目标或权限，内容已复制，请手动粘贴。": {
+    "en": "Target or permission could not be confirmed. Content copied; paste manually.",
+    "zh-Hans": "未能确认粘贴目标或权限，内容已复制，请手动粘贴。",
+    "ja": "貼り付け先または権限を確認できません。手動で貼り付けてください。",
+    "fr": "Cible ou autorisation non confirmée. Contenu copié ; collez manuellement.",
+    "de": "Ziel oder Berechtigung nicht bestätigt. Inhalt kopiert; bitte manuell einfügen.",
+    "ko": "대상 또는 권한을 확인할 수 없습니다. 수동으로 붙여넣으세요."
+  },
+  "已复制": {
+    "en": "Copied",
+    "zh-Hans": "已复制",
+    "ja": "コピーしました",
+    "fr": "Copié",
+    "de": "Kopiert",
+    "ko": "복사됨"
+  },
+  "历史升级未完成，已保留原数据，请勿删除本地历史。": {
+    "en": "History upgrade could not finish. Original data was preserved; do not delete local history.",
+    "zh-Hans": "历史升级未完成，已保留原数据，请勿删除本地历史。",
+    "ja": "履歴の更新を完了できませんでした。元データは保持されています。削除しないでください。",
+    "fr": "La migration n’a pas abouti. Les données d’origine sont conservées ; ne supprimez pas l’historique local.",
+    "de": "Verlaufsaktualisierung fehlgeschlagen. Originaldaten bleiben erhalten; lokalen Verlauf nicht löschen.",
+    "ko": "기록 업그레이드를 완료하지 못했습니다. 원본 데이터는 보존되었습니다. 로컬 기록을 삭제하지 마세요."
+  },
+  "复制路径": {
+    "en": "Copy Paths",
+    "zh-Hans": "复制路径",
+    "ja": "パスをコピー",
+    "fr": "Copier les chemins",
+    "de": "Pfade kopieren",
+    "ko": "경로 복사"
+  },
+  "复制文件名": {
+    "en": "Copy File Names",
+    "zh-Hans": "复制文件名",
+    "ja": "ファイル名をコピー",
+    "fr": "Copier les noms",
+    "de": "Dateinamen kopieren",
+    "ko": "파일 이름 복사"
+  },
+  "在Finder中显示": {
+    "en": "Show in Finder",
+    "zh-Hans": "在Finder中显示",
+    "ja": "Finderで表示",
+    "fr": "Afficher dans le Finder",
+    "de": "Im Finder zeigen",
+    "ko": "Finder에서 보기"
+  },
+  "文件数量": {
+    "en": "%d files",
+    "zh-Hans": "%d 个文件",
+    "ja": "%dファイル",
+    "fr": "%d fichiers",
+    "de": "%d Dateien",
+    "ko": "파일 %d개"
+  },
+  "选中后自动粘贴": {
+    "en": "Automatically paste selected items",
+    "zh-Hans": "选中后自动粘贴",
+    "ja": "選択した項目を自動貼り付け",
+    "fr": "Coller automatiquement les éléments sélectionnés",
+    "de": "Ausgewählte Einträge automatisch einfügen",
+    "ko": "선택한 항목 자동 붙여넣기"
+  },
+  "默认只复制。开启后，回车、双击或⌘1–9会粘贴到呼出面板前的应用。": {
+    "en": "Copy-only by default. When enabled, Return, double-click or ⌘1–9 pastes into the app that was active before opening Pasteback.",
+    "zh-Hans": "默认只复制。开启后，回车、双击或⌘1–9会粘贴到呼出面板前的应用。",
+    "ja": "標準はコピーのみです。有効時はReturn、ダブルクリック、⌘1–9で元のアプリに貼り付けます。",
+    "fr": "Par défaut, copier seul. Une fois activé, Retour, le double-clic ou ⌘1–9 colle dans l’application active avant Pasteback.",
+    "de": "Standardmäßig nur kopieren. Aktiviert fügen Return, Doppelklick oder ⌘1–9 in die zuvor aktive App ein.",
+    "ko": "기본은 복사만 합니다. 켜면 Return, 두 번 클릭 또는 ⌘1–9로 이전 앱에 붙여넣습니다."
+  },
+  "复制路径格式": {
+    "en": "Path Copy Format",
+    "zh-Hans": "复制路径格式",
+    "ja": "パスのコピー形式",
+    "fr": "Format des chemins",
+    "de": "Pfadformat",
+    "ko": "경로 복사 형식"
+  },
+  "终端安全格式": {
+    "en": "Shell-quoted paths",
+    "zh-Hans": "终端安全格式",
+    "ja": "シェル用引用形式",
+    "fr": "Chemins échappés pour le terminal",
+    "de": "Shell-sicher quotierte Pfade",
+    "ko": "터미널 인용 경로"
+  },
+  "原样路径": {
+    "en": "Raw paths",
+    "zh-Hans": "原样路径",
+    "ja": "そのままのパス",
+    "fr": "Chemins bruts",
+    "de": "Unveränderte Pfade",
+    "ko": "원본 경로"
+  },
+  "@引用格式": {
+    "en": "@ references",
+    "zh-Hans": "@引用格式",
+    "ja": "@参照形式",
+    "fr": "Références @",
+    "de": "@-Referenzen",
+    "ko": "@ 참조"
+  },
+  "文件只保存引用。⌥↩复制路径；终端格式用空格分隔，其他格式每行一个。": {
+    "en": "Files are references only. ⌥↩ copies paths. Shell format uses spaces; other formats use one path per line.",
+    "zh-Hans": "文件只保存引用。⌥↩复制路径；终端格式用空格分隔，其他格式每行一个。",
+    "ja": "ファイルは参照のみ保存します。⌥↩でパスをコピー。シェル形式は空白区切り、他は1行1パスです。",
+    "fr": "Seules les références sont conservées. ⌥↩ copie les chemins. Séparation par espaces en mode terminal, sinon un chemin par ligne.",
+    "de": "Nur Dateiverweise werden gespeichert. ⌥↩ kopiert Pfade: im Shell-Format mit Leerzeichen, sonst ein Pfad pro Zeile.",
+    "ko": "파일 참조만 저장합니다. ⌥↩로 경로 복사. 터미널 형식은 공백, 나머지는 줄로 구분합니다."
+  },
+  "文件内容": {
+    "en": "Files",
+    "zh-Hans": "文件内容",
+    "ja": "ファイル",
+    "fr": "Fichiers",
+    "de": "Dateien",
+    "ko": "파일"
+  },
+  "删除记录只移除引用，不删除原文件。": {
+    "en": "Deleting history removes references, not original files.",
+    "zh-Hans": "删除记录只移除引用，不删除原文件。",
+    "ja": "履歴を削除しても元のファイルは削除されません。",
+    "fr": "Supprimer l’historique retire les références, pas les fichiers d’origine.",
+    "de": "Beim Löschen des Verlaufs bleiben Originaldateien erhalten.",
+    "ko": "기록을 삭제해도 원본 파일은 삭제되지 않습니다."
+  },
+  "文件只保存引用，原文件移动或删除后需重新复制。": {
+    "en": "Only references are saved. Copy files again if originals are moved or deleted.",
+    "zh-Hans": "文件只保存引用，原文件移动或删除后需重新复制。",
+    "ja": "参照のみ保存されます。移動・削除後は再度コピーしてください。",
+    "fr": "Seules les références sont enregistrées. Recopiez les fichiers déplacés ou supprimés.",
+    "de": "Nur Verweise werden gespeichert. Verschobene oder gelöschte Dateien erneut kopieren.",
+    "ko": "참조만 저장됩니다. 원본을 이동하거나 삭제하면 다시 복사해야 합니다."
   }
 }
