@@ -8,6 +8,10 @@ package_dir="$project_root/Build/Release-$version"
 feed_dir="$package_dir/update-feed"
 mkdir -p "$feed_dir"
 cp "$package_dir/Pasteback-$version-universal.zip" "$feed_dir/"
-printf 'Pasteback %s: signed in-app updates. Clipboard history stays on your Mac.\n' "$version" > "$feed_dir/Pasteback-$version-universal.txt"
+if [[ -n "${PASTEBACK_RELEASE_NOTES_FILE:-}" ]]; then
+    cp "$PASTEBACK_RELEASE_NOTES_FILE" "$feed_dir/Pasteback-$version-universal.txt"
+else
+    printf 'Pasteback %s: signed in-app updates. Clipboard history stays on your Mac.\n' "$version" > "$feed_dir/Pasteback-$version-universal.txt"
+fi
 "$SPARKLE_BIN/generate_appcast" --account Pasteback --maximum-deltas 0 --embed-release-notes --download-url-prefix "https://github.com/JohnSmitho91p8/Pasteback/releases/download/v$version/" "$feed_dir"
 printf 'Publish release assets first, then upload unchanged signed feed: %s/appcast.xml\n' "$feed_dir"
