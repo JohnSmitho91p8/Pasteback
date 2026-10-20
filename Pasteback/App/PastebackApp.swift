@@ -49,9 +49,18 @@ final class HistoryPanel: NSPanel {
         umask(0o077) // New databases, journals and images are private to this account.
         NSApp.setActivationPolicy(.accessory)
         UpdateChecker.shared.start()
-        do { store = try ClipStore() } catch {
-            let alert = NSAlert(); alert.messageText = tr("无法打开 Pasteback 历史库"); alert.informativeText = error.localizedDescription; alert.runModal(); NSApp.terminate(nil); return
+        Task {
+            do {
+                let container = try await Task.detached(priority: .userInitiated) { try HistoryDatabase.open() }.value
+                store = try ClipStore(preparedContainer: container)
+                finishLaunching()
+            } catch {
+                let alert = NSAlert(); alert.messageText = tr("无法打开 Pasteback 历史库"); alert.informativeText = tr("历史升级未完成，已保留原数据，请勿删除本地历史。")
+                alert.runModal(); NSApp.terminate(nil)
+            }
         }
+    }
+    private func finishLaunching() {
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         status.button?.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: "Pasteback")
         status.button?.target = self; status.button?.action = #selector(statusClicked)
@@ -60,7 +69,7 @@ final class HistoryPanel: NSPanel {
         panel.isFloatingPanel = true; panel.level = .floating; panel.isOpaque = false
         panel.backgroundColor = .clear; panel.hasShadow = true; panel.isMovableByWindowBackground = true
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        let root = HistoryView(store: store, close: { [weak self] in self?.panel.orderOut(nil) }, settings: { [weak self] in self?.showPreferences() })
+        let root = HistoryView(store: store, primary: { [weak self] item, mode in await self?.perform(item, mode: mode) ?? false }, close: { [weak self] in self?.panel.orderOut(nil) }, settings: { [weak self] in self?.showPreferences() })
         let host = NSHostingView(rootView: root.clipShape(RoundedRectangle(cornerRadius: 16)))
         panel.contentView = host
         panel.delegate = self
@@ -81,6 +90,7 @@ final class HistoryPanel: NSPanel {
     }
     @objc private func languageChanged() { preferences?.title = tr("Pasteback 设置") }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        guard panel != nil else { return false }
         if !panel.isVisible { toggle() }
         return true
     }
@@ -98,6 +108,7 @@ final class HistoryPanel: NSPanel {
         } else { toggle() }
     }
     @objc func toggle() {
+        if !panel.isVisible { PasteAction.shared.rememberTarget(NSWorkspace.shared.frontmostApplication) }
         preferences?.orderOut(nil)
         if panel.isVisible { panel.orderOut(nil); return }
         let mouse = NSEvent.mouseLocation
@@ -112,6 +123,15 @@ final class HistoryPanel: NSPanel {
     func windowDidMove(_ notification: Notification) {
         guard let window = notification.object as? NSWindow, window === panel else { return }
         UserDefaults.standard.set(NSStringFromPoint(panel.frame.origin), forKey: "panelOrigin")
+    }
+    private var performingAction = false
+    func perform(_ item: ClipItem, mode: ClipStore.CopyMode = .content) async -> Bool {
+        guard !performingAction else { return false }
+        performingAction = true
+        defer { performingAction = false }
+        let success = await store.copy(item, mode: mode)
+        if success { await PasteAction.shared.pasteIfEnabled { [weak self] in self?.panel.orderOut(nil) } }
+        return success
     }
     @objc func checkForUpdates() { Task { await UpdateChecker.shared.check() } }
     @objc func pause() { store.paused.toggle() }
