@@ -192,12 +192,12 @@
     "ko": "기록 열기"
   },
   "初版使用固定快捷键。回车复制后，切回原应用按 ⌘V 粘贴。自动粘贴与快捷键录制将在下一阶段接入。": {
-    "en": "The shortcut is currently fixed. Return copies the item; switch back and press ⌘V to paste.",
-    "zh-Hans": "初版使用固定快捷键。回车复制后，切回原应用按 ⌘V 粘贴。自动粘贴与快捷键录制将在下一阶段接入。",
-    "ja": "現在、ショートカットは固定です。Return でコピーし、元のアプリで ⌘V を押して貼り付けます。",
-    "fr": "Le raccourci est fixe pour le moment. Entrée copie l’élément ; revenez à l’app et collez avec ⌘V.",
-    "de": "Das Tastenkürzel ist derzeit fest. Return kopiert; in der Ziel-App mit ⌘V einfügen.",
-    "ko": "현재 단축키는 고정되어 있습니다. Return으로 복사한 뒤 원래 앱에서 ⌘V로 붙여넣으세요."
+    "en": "Press Return to copy, then switch to the destination app and press ⌘V to paste.",
+    "zh-Hans": "按回车复制选中项，再切回目标应用按 ⌘V 粘贴。",
+    "ja": "Returnでコピーし、貼り付け先で⌘Vを押します。",
+    "fr": "Appuyez sur Retour pour copier, puis sur ⌘V dans l’application cible.",
+    "de": "Mit Return kopieren, dann in der Ziel-App mit ⌘V einfügen.",
+    "ko": "Return으로 복사한 다음 대상 앱에서 ⌘V로 붙여넣으세요."
   },
   "存储": {
     "en": "Storage",
@@ -384,12 +384,12 @@
     "ko": "Mac의 선호 언어를 따르며 지원하지 않으면 영어를 사용합니다. 위치 정보는 필요하지 않습니다."
   },
   "本地数据说明": {
-    "en": "History stays in this Mac’s Application Support folder, separate from the source project in iCloud Drive. Pasteback does not upload or sync it.",
-    "zh-Hans": "历史保存在这台 Mac 的应用支持目录，与 iCloud 云盘中的源码项目分开。Pasteback 不上传、不同步历史。",
-    "ja": "履歴はこの Mac の Application Support に保存され、iCloud Drive のソースとは別です。アップロードや同期は行いません。",
-    "fr": "L’historique reste dans Application Support sur ce Mac, séparé du projet dans iCloud Drive. Pasteback ne l’envoie ni ne le synchronise.",
-    "de": "Der Verlauf liegt lokal in Application Support, getrennt vom Quellprojekt in iCloud Drive. Pasteback lädt ihn nicht hoch und synchronisiert ihn nicht.",
-    "ko": "기록은 이 Mac의 Application Support에 저장되며 iCloud Drive의 소스 프로젝트와 분리됩니다. Pasteback은 기록을 업로드하거나 동기화하지 않습니다."
+    "en": "Your clipboard history stays on this Mac. It is not uploaded or synced.",
+    "zh-Hans": "剪贴板历史仅保存在这台 Mac，不上传、不云同步。",
+    "ja": "クリップボード履歴はこのMacのみに保存されます。アップロードや同期は行いません。",
+    "fr": "L’historique reste sur ce Mac. Il n’est ni envoyé ni synchronisé.",
+    "de": "Der Verlauf bleibt auf diesem Mac. Kein Upload und keine Synchronisierung.",
+    "ko": "클립보드 기록은 이 Mac에만 저장되며 업로드하거나 동기화하지 않습니다."
   },
   "保护范围说明": {
     "en": "Sensitive clipboard flags and excluded apps are skipped. Unmarked passwords may still be saved. History is not encrypted by Pasteback; software running as your account may be able to read it.",
@@ -686,5 +686,13 @@
     "fr": "Vérifiez la connexion et réessayez.",
     "de": "Netzwerk prüfen und erneut versuchen.",
     "ko": "네트워크를 확인하고 다시 시도하세요."
+  },
+  "返回历史": {
+    "en": "Back to History",
+    "zh-Hans": "返回历史",
+    "ja": "履歴に戻る",
+    "fr": "Retour à l’historique",
+    "de": "Zurück zum Verlauf",
+    "ko": "기록으로 돌아가기"
   }
 }
