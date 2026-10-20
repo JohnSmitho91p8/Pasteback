@@ -4,25 +4,28 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <channel>
         <title>Pasteback</title>
         <item>
-            <title>0.3.0</title>
-            <pubDate>Tue, 20 Oct 2026 23:10:22 +0800</pubDate>
-            <sparkle:version>5</sparkle:version>
-            <sparkle:shortVersionString>0.3.0</sparkle:shortVersionString>
+            <title>0.4.0</title>
+            <pubDate>Tue, 20 Oct 2026 23:46:32 +0800</pubDate>
+            <sparkle:version>6</sparkle:version>
+            <sparkle:shortVersionString>0.4.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.3.0 — Files & Faster Actions
+            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.4.0 — A roomier workspace / 更从容的窗口
 
-• 可选自动粘贴：默认关闭。在设置授权并开启后，回车、双击或⌘1–9尝试粘贴到原应用。权限、安全输入或焦点异常时仅复制。
-• ⌘1–9快速选择当前搜索结果前九条。
-• 文件与文件夹历史：只存引用，最多200个；支持对象复制、复制路径、复制文件名及在Finder显示。
-• ⌥↩复制文件路径；支持终端安全格式（默认）、原样路径、@引用。
-• 旧历史升级前自动本地备份；删除文件历史不删除原文件。迁移备份需在本地数据目录单独管理。
+• A standard Mac window with dragging, resizing, minimization and full screen. Window size and position are remembered.
+• Persistent sidebar navigation for history and Settings. Return without losing your search and selection.
+• Browse history and full content side by side. Copy whole entries or select text in the detail pane.
 
-Optional auto-paste (off by default), ⌘1–9 quick actions, local file references and ⌥↩ path copying. Existing history is backed up before schema migration. Accessibility permission and target app support are required for automatic pasting. File promises and moved-file tracking are not supported. No cloud sync or analytics.
+• 标准 Mac 窗口，支持自由拖动、缩放、最小化和全屏，记住窗口大小与位置。
+• 历史与设置使用同一窗口，侧栏随时切换，返回保留搜索与选择。
+• 列表与详情并排，单击直接查看完整内容，可复制全部或拖选文字。
+
+This release focuses only on window layout. Clipboard capture, privacy settings and existing shortcuts remain available. Update inside Pasteback; your history is preserved.
+本次仅改造窗口。保留既有记录能力、隐私设置及快捷键，历史记录保留。
 ]]></description>
-            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.3.0/Pasteback-0.3.0-universal.zip" length="2852439" type="application/octet-stream" sparkle:edSignature="+ez5vJSpx/VXzZewHZFlj01iVSnS9cCvw2bBE2AisdxdzaQboKsywqQh/5lG8mIV96Fo9pY/FOTAo2WWk40EBQ=="></enclosure>
+            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.4.0/Pasteback-0.4.0-universal.zip" length="2894553" type="application/octet-stream" sparkle:edSignature="TTEMfcLlStrz8EwMaQ/OUW/tVGCPA2kgSELc7UbxeSgVQ07EcNUcHvWF6igufzyn1o8bDHNRMCGW2J0csqYGBQ=="></enclosure>
         </item>
     </channel>
 </rss><!-- sparkle-signatures:
-edSignature: /WcAnTDKpio0dz7TVcQErE21RbNleigif2dR6tFvOw4Jpq6xQL0nQSGkjhT+Tx+8/4REZdbamuTkNnq94QGXDA==
-length: 2112
+edSignature: eGW0CY4qUM40vAckzCvKZjMckVPE/PipesY6+FuoCwuSX6XRMRQPFEZFBOwGYaNE2Kq4XVXQLthU94gJ3p87Dw==
+length: 2105
 -->
