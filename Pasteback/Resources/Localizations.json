@@ -616,12 +616,12 @@
     "ko": "버전 및 업데이트"
   },
   "检查更新隐私说明": {
-    "en": "Only checks GitHub when you click. Sends no clipboard history. Downloads open in your browser; installation is manual.",
-    "zh-Hans": "仅在点击时访问 GitHub 检查版本，不发送剪贴板历史。在浏览器下载后手动安装。",
-    "ja": "クリック時のみ GitHub に確認します。履歴は送信しません。ダウンロードはブラウザで開き、手動でインストールします。",
-    "fr": "Consulte GitHub uniquement à votre demande, sans envoyer l’historique. Téléchargement dans le navigateur, installation manuelle.",
-    "de": "Prüft GitHub nur auf Klick, ohne den Verlauf zu senden. Download im Browser, Installation manuell.",
-    "ko": "클릭할 때만 GitHub를 확인합니다. 기록은 전송하지 않습니다. 브라우저에서 다운로드하고 직접 설치합니다."
+    "en": "Check, download and install signed updates in Pasteback. Only checks when requested; clipboard history stays local.",
+    "zh-Hans": "在 App 内检查、下载并安装签名更新。仅主动检查时联网，剪贴板历史保留在本机。",
+    "ja": "アプリ内で更新を確認・ダウンロード・インストール。手動確認時のみ通信し、履歴はMac内に保存されます。",
+    "fr": "Vérifiez, téléchargez et installez les mises à jour dans Pasteback. Vérification manuelle uniquement ; historique local.",
+    "de": "Updates direkt in Pasteback prüfen, laden und installieren. Nur manuelle Abfragen; der Verlauf bleibt lokal.",
+    "ko": "앱 안에서 업데이트 확인, 다운로드 및 설치. 수동 확인 시에만 연결하며 기록은 Mac에 보관됩니다."
   },
   "尚无可用版本": {
     "en": "No release available yet",

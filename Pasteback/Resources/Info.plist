@@ -4,5 +4,19 @@
 <dict>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
+	<key>SUAutomaticallyUpdate</key>
+	<false/>
+	<key>SUEnableAutomaticChecks</key>
+	<false/>
+	<key>SUEnableSystemProfiling</key>
+	<false/>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/JohnSmitho91p8/Pasteback/main/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>T7DKKURfz6GASsmgF7F++mfRL1XL3xnxauCIIjL3fDY=</string>
+	<key>SURequireSignedFeed</key>
+	<true/>
+	<key>SUVerifyUpdateBeforeExtraction</key>
+	<true/>
 </dict>
 </plist>
