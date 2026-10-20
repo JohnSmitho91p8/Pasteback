@@ -48,6 +48,7 @@ final class HistoryPanel: NSPanel {
     func applicationDidFinishLaunching(_ notification: Notification) {
         umask(0o077) // New databases, journals and images are private to this account.
         NSApp.setActivationPolicy(.accessory)
+        UpdateChecker.shared.start()
         do { store = try ClipStore() } catch {
             let alert = NSAlert(); alert.messageText = tr("无法打开 Pasteback 历史库"); alert.informativeText = error.localizedDescription; alert.runModal(); NSApp.terminate(nil); return
         }
