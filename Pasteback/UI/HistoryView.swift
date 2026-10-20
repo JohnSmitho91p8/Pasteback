@@ -4,6 +4,35 @@ import ServiceManagement
 
 private enum ClearAction { case clipboard, all }
 
+struct WorkspaceView: View {
+    let store: ClipStore
+    @Bindable var navigation: WorkspaceNavigation
+    var primary: (ClipItem, ClipStore.CopyMode) async -> Bool
+    var close: () -> Void
+    var body: some View {
+        HStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Image(nsImage: NSApplication.shared.applicationIconImage).resizable().frame(width: 28, height: 28)
+                    Text("Pasteback").font(.title3.bold())
+                }.padding(.vertical, 18)
+                Button { navigation.settings = false } label: { Label(tr("你的剪贴板"), systemImage: "doc.on.clipboard").frame(maxWidth: .infinity, alignment: .leading).padding(10) }
+                    .buttonStyle(.plain).background(!navigation.settings ? Color.teal.opacity(0.13) : .clear, in: RoundedRectangle(cornerRadius: 8))
+                Spacer()
+                Button { navigation.settings = true } label: { Label(tr("设置"), systemImage: "gearshape").frame(maxWidth: .infinity, alignment: .leading).padding(10) }
+                    .buttonStyle(.plain).background(navigation.settings ? Color.teal.opacity(0.13) : .clear, in: RoundedRectangle(cornerRadius: 8))
+            }.padding(14).frame(width: 180).background(.regularMaterial)
+            Divider()
+            ZStack {
+                HistoryView(store: store, primary: primary, close: close, settings: { navigation.settings = true })
+                    .disabled(navigation.settings).opacity(navigation.settings ? 0 : 1).allowsHitTesting(!navigation.settings).accessibilityHidden(navigation.settings)
+                if navigation.settings { PreferencesView(back: { navigation.settings = false }, store: store).background(Color(nsColor: .windowBackgroundColor)) }
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
+        }.frame(minWidth: 900, minHeight: 540)
+        .environment(\.locale, AppLanguage.shared.locale)
+    }
+}
+
 struct HistoryView: View {
     @Bindable var store: ClipStore
     var primary: (ClipItem, ClipStore.CopyMode) async -> Bool
@@ -18,6 +47,7 @@ struct HistoryView: View {
     @FocusState private var searching: Bool
     private var filtered: [ClipItem] { store.items.filter { query.isEmpty || $0.text.localizedCaseInsensitiveContains(query) || $0.source.localizedCaseInsensitiveContains(query) || $0.files.contains { $0.name.localizedCaseInsensitiveContains(query) || $0.path.localizedCaseInsensitiveContains(query) } } }
     var body: some View {
+        HSplitView {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
                 Image(nsImage: NSApplication.shared.applicationIconImage).resizable().scaledToFit().frame(width: 26, height: 26)
@@ -57,7 +87,7 @@ struct HistoryView: View {
                                         selection = item.id
                                         switch gesture {
                                         case .first: activate(item)
-                                        case .second: preview = item
+                                        case .second: break
                                         }
                                     })
                                     .contextMenu {
@@ -87,7 +117,19 @@ struct HistoryView: View {
             }.font(.system(size: 10)).foregroundStyle(.secondary).padding(.horizontal, 18).frame(height: 37)
             if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding(8) }
         }
-        .frame(width: 420, height: 480).background(.regularMaterial)
+        .frame(minWidth: 300, idealWidth: 360, maxWidth: 460, maxHeight: .infinity).background(Color(nsColor: .controlBackgroundColor))
+        Group {
+            if let item = filtered.first(where: { $0.id == selection }) {
+                ClipDetailView(item: item, store: store, embedded: true).id(item.id)
+            } else {
+                VStack(spacing: 14) {
+                    Image(systemName: "doc.text.magnifyingglass").font(.system(size: 38, weight: .ultraLight)).foregroundStyle(.teal)
+                    Text(tr("复制一下，随时找回。")).font(.headline)
+                }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }.frame(minWidth: 340, maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .background(Color(nsColor: .windowBackgroundColor))
         .environment(\.locale, AppLanguage.shared.locale)
         .onAppear { searching = true; selection = filtered.first?.id }
         .onChange(of: query) { selection = filtered.first?.id }
@@ -250,7 +292,7 @@ struct PreferencesView: View {
                 Button(tr("打开本地数据文件夹")) { NSWorkspace.shared.open(ClipStore.directory) }
             }
         }.formStyle(.grouped)
-        }.frame(width: 540, height: 650)
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
         .environment(\.locale, AppLanguage.shared.locale)
         .alert(tr("清空全部历史？"), isPresented: $confirmClear) {
             Button(tr("取消"), role: .cancel) {}
@@ -289,6 +331,7 @@ struct ClipThumbnail: View {
 struct ClipDetailView: View {
     let item: ClipItem
     let store: ClipStore
+    let embedded: Bool
     // Snapshot values remain valid while the sheet dismisses after deletion.
     private let text: String
     private let imageName: String?
@@ -298,7 +341,8 @@ struct ClipDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var copied = false
     @State private var confirmDelete = false
-    init(item: ClipItem, store: ClipStore) {
+    init(item: ClipItem, store: ClipStore, embedded: Bool = false) {
+        self.embedded = embedded
         self.item = item; self.store = store
         text = item.text; imageName = item.imageName; source = item.source; files = item.files
     }
@@ -307,7 +351,7 @@ struct ClipDetailView: View {
             HStack {
                 Text(!files.isEmpty ? tr("文件内容") : imageName == nil ? tr("文字内容") : tr("图片内容")).font(.headline)
                 Spacer()
-                Button(tr("完成")) { dismiss() }.keyboardShortcut(.cancelAction)
+                if !embedded { Button(tr("完成")) { dismiss() }.keyboardShortcut(.cancelAction) }
             }
             if !files.isEmpty {
                 ScrollView { LazyVStack(alignment: .leading, spacing: 12) { ForEach(files, id: \.path) { FileReferenceRow(file: $0) } } }
@@ -339,11 +383,11 @@ struct ClipDetailView: View {
                 filesAvailable = exists
                 do { try await Task.sleep(for: .seconds(2)) } catch { return }
             }
-        }.padding(20).frame(width: 380, height: 400)
+        }.padding(24).frame(maxWidth: .infinity, maxHeight: .infinity)
         .environment(\.locale, AppLanguage.shared.locale)
         .alert(tr("删除这条历史？"), isPresented: $confirmDelete) {
             Button(tr("取消"), role: .cancel) {}
-            Button(tr("删除"), role: .destructive) { store.remove(item); dismiss() }
+            Button(tr("删除"), role: .destructive) { store.remove(item); if !embedded { dismiss() } }
         } message: { Text(tr("删除说明")) }
     }
 }
