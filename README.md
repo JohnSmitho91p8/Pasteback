@@ -11,7 +11,7 @@ Find the text, code and images you copied — right from your Mac’s menu bar.
 - Use ⌘1–9 for the first nine search results. Copy files as objects or paths (⌥↩).
 - Optionally paste into the previous app with Return or a double-click; Accessibility permission is required and the default remains copy-only.
 - Pin useful items, delete individual entries or clear your history.
-- Move the history window anywhere and return easily from Settings.
+- Browse history and full previews side by side in a resizable window, with a persistent sidebar for Settings. Move, minimize or use full screen; your window size and position are remembered.
 - Choose English, 简体中文, 日本語, Français, Deutsch or 한국어.
 - Check for updates and install new versions inside the app.
 
@@ -31,7 +31,7 @@ Copy text, code or an image in another app, then open Pasteback to find it. Sele
 
 For a screenshot, use **⌃⇧⌘4** to copy a selection or **⌃⇧⌘3** to copy the screen. Screenshots saved only as files are not added to clipboard history.
 
-In Settings, choose **Back to History** or press **⌘[** to return. Closing Settings also restores the history window.
+Use the sidebar to switch between history and Settings. **Back to History** or **⌘[** returns to your previous search and selection. Closing the window keeps recording active; reopen it from the menu bar or **⌘⇧V**.
 
 For file references, right-click to copy paths, copy names or reveal files in Finder. Only references are saved; deleting history never deletes original files. Moved or deleted files must be copied again. Paths can use shell quoting (default), raw text or @ references.
 
