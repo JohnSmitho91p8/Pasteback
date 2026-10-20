@@ -360,10 +360,7 @@ struct ClipDetailView: View {
             } else if let name = imageName {
                 ClipThumbnail(name: name).frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                ScrollView {
-                    Text(text).font(.system(size: 14)).textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading).padding(12)
-                }.background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 8))
+                CppContentView(text: text)
             }
             Text(!files.isEmpty ? tr("文件只保存引用，原文件移动或删除后需重新复制。") : imageName == nil ? tr("拖选文字后按 ⌘C 可复制选中部分。") : tr("点击下方按钮复制原始图片。"))
                 .font(.caption).foregroundStyle(.secondary)
