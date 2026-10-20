@@ -4,23 +4,25 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <channel>
         <title>Pasteback</title>
         <item>
-            <title>0.2.1</title>
-            <pubDate>Tue, 20 Oct 2026 11:55:55 +0800</pubDate>
-            <sparkle:version>4</sparkle:version>
-            <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
+            <title>0.3.0</title>
+            <pubDate>Tue, 20 Oct 2026 23:10:22 +0800</pubDate>
+            <sparkle:version>5</sparkle:version>
+            <sparkle:shortVersionString>0.3.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.2.1
+            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.3.0 — Files & Faster Actions
 
-更快、更稳定的复制记录：50 毫秒检查周期，后台读取文字和图片，延迟数据自动重试。支持 PNG、TIFF、JPEG、HEIC、GIF、WebP，保留代码原有换行与缩进。
+• 可选自动粘贴：默认关闭。在设置授权并开启后，回车、双击或⌘1–9尝试粘贴到原应用。权限、安全输入或焦点异常时仅复制。
+• ⌘1–9快速选择当前搜索结果前九条。
+• 文件与文件夹历史：只存引用，最多200个；支持对象复制、复制路径、复制文件名及在Finder显示。
+• ⌥↩复制文件路径；支持终端安全格式（默认）、原样路径、@引用。
+• 旧历史升级前自动本地备份；删除文件历史不删除原文件。迁移备份需在本地数据目录单独管理。
 
-设置顶部新增“返回历史”（⌘[），关闭设置也会回到历史。清理了个人 iCloud 项目位置和内部开发规划等界面文案。
-
-Faster clipboard monitoring and background provider reads. Back to History navigation and clearer privacy copy. Clipboard history stays local; sensitive and excluded content remains skipped.
+Optional auto-paste (off by default), ⌘1–9 quick actions, local file references and ⌥↩ path copying. Existing history is backed up before schema migration. Accessibility permission and target app support are required for automatic pasting. File promises and moved-file tracking are not supported. No cloud sync or analytics.
 ]]></description>
-            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.2.1/Pasteback-0.2.1-universal.zip" length="2640956" type="application/octet-stream" sparkle:edSignature="2Oyqiz6B3aA/lN6rPhTbhkcJas3qPr/DFBt2uzv5A2sBo/oUV6mjQvPXzolug6g2sIV2EKYi91n3U9NK0o+VCQ=="></enclosure>
+            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.3.0/Pasteback-0.3.0-universal.zip" length="2852439" type="application/octet-stream" sparkle:edSignature="+ez5vJSpx/VXzZewHZFlj01iVSnS9cCvw2bBE2AisdxdzaQboKsywqQh/5lG8mIV96Fo9pY/FOTAo2WWk40EBQ=="></enclosure>
         </item>
     </channel>
 </rss><!-- sparkle-signatures:
-edSignature: pBNlneplkbnjt37QOAIyZ+ZTBiksvRU9/bWaXM8hpAHnM60NytX+VEsrIzccguUMn2bFHXm9X6WMdAZennMxAw==
-length: 1708
+edSignature: /WcAnTDKpio0dz7TVcQErE21RbNleigif2dR6tFvOw4Jpq6xQL0nQSGkjhT+Tx+8/4REZdbamuTkNnq94QGXDA==
+length: 2112
 -->
