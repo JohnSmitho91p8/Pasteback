@@ -19,7 +19,7 @@ struct HistoryView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
-                Image(systemName: "square.on.square.fill").font(.title3).foregroundStyle(.teal)
+                Image(nsImage: NSApplication.shared.applicationIconImage).resizable().scaledToFit().frame(width: 26, height: 26)
                 Text("Pasteback").font(.system(size: 18, weight: .semibold, design: .rounded))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .help(tr("按住顶部标题或空白处拖动窗口"))
