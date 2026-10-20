@@ -14,10 +14,11 @@ A lightweight clipboard history app for **macOS 14 or later**, built with SwiftU
 
 ## Features
 
-- Local text and PNG/TIFF image history, saved across launches.
+- Local text/code and PNG/TIFF/JPEG/HEIC/GIF/WebP image history, saved across launches.
 - Newest-first order, search, pin protection, individual deletion and clear controls.
 - Full-text preview; copy all or select part of the text and press ⌘C.
 - Menu-bar app, draggable panel with remembered position, ⌘⇧V shortcut.
+- Settings has Back to History (⌘[); closing settings also restores history.
 - System language detection and English, Simplified Chinese, Japanese, French, German and Korean.
 - Sensitive pasteboard flag filtering, excluded apps and pause recording.
 - Background image storage, bounded capture queue and retries for delayed clipboard data.
@@ -39,7 +40,9 @@ The only network feature is an explicit, user-triggered GitHub update check. It 
 
 ## Screenshot tips
 
-Use Control–Shift–Command–4 (selection) or Control–Shift–Command–3 (screen) to copy a screenshot to the system clipboard. A screenshot saved only as a desktop file is not a clipboard item. Input images are limited to 128 MB and 80 million pixels; text is limited to 2 MB. Over-limit or unavailable data produces a message.
+Use Control–Shift–Command–4 (selection) or Control–Shift–Command–3 (screen) to copy a screenshot to the system clipboard. A screenshot saved only as a desktop file is not a clipboard item. The monitor checks clipboard ownership every 50 ms and reads provider data off the UI thread. Sensitive/excluded apps remain skipped. Content overwritten between checks cannot be recovered; no capture of protected content is promised.
+
+Input images are limited to 128 MB and 80 million pixels; text is limited to 2 MB. Over-limit or unavailable data produces a message.
 
 ## Build
 
