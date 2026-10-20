@@ -98,6 +98,7 @@ final class HistoryPanel: NSPanel {
         } else { toggle() }
     }
     @objc func toggle() {
+        preferences?.orderOut(nil)
         if panel.isVisible { panel.orderOut(nil); return }
         let mouse = NSEvent.mouseLocation
         let screen = NSScreen.screens.first(where: { $0.frame.contains(mouse) }) ?? NSScreen.main!
@@ -115,12 +116,22 @@ final class HistoryPanel: NSPanel {
     @objc func checkForUpdates() { Task { await UpdateChecker.shared.check() } }
     @objc func pause() { store.paused.toggle() }
     @objc func quit() { NSApp.terminate(nil) }
+    func showHistory() {
+        preferences?.orderOut(nil)
+        if !panel.isVisible { toggle() }
+        else { NSApp.activate(ignoringOtherApps: true); panel.makeKeyAndOrderFront(nil) }
+    }
+    func windowWillClose(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow, window === preferences else { return }
+        showHistory()
+    }
     @objc func showPreferences() {
         panel.orderOut(nil)
         if preferences == nil {
             preferences = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 540, height: 650), styleMask: [.titled, .closable, .miniaturizable], backing: .buffered, defer: false)
             preferences?.title = tr("Pasteback 设置"); preferences?.isReleasedWhenClosed = false
-            preferences?.contentView = NSHostingView(rootView: PreferencesView(store: store)); preferences?.center()
+            preferences?.delegate = self
+            preferences?.contentView = NSHostingView(rootView: PreferencesView(back: { [weak self] in self?.showHistory() }, store: store)); preferences?.center()
         }
         NSApp.activate(ignoringOtherApps: true); preferences?.makeKeyAndOrderFront(nil)
     }
