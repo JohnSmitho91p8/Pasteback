@@ -7,42 +7,15 @@ import Carbon
     var body: some Scene { Settings { EmptyView() } }
 }
 
-final class HistoryPanel: NSPanel {
-    override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { true }
-
-    private var dragOffset: NSPoint?
-
-    override func sendEvent(_ event: NSEvent) {
-        switch event.type {
-        case .leftMouseDown:
-            let point = event.locationInWindow
-            let header = NSRect(x: 0, y: frame.height - 66, width: frame.width - 48, height: 66)
-            if header.contains(point) {
-                dragOffset = point
-                makeKeyAndOrderFront(nil)
-                return
-            }
-        case .leftMouseDragged:
-            if let offset = dragOffset {
-                let screenPoint = convertPoint(toScreen: event.locationInWindow)
-                setFrameOrigin(NSPoint(x: screenPoint.x - offset.x, y: screenPoint.y - offset.y))
-                return
-            }
-        case .leftMouseUp:
-            if dragOffset != nil { dragOffset = nil; return }
-        default: break
-        }
-        super.sendEvent(event)
-    }
-
+@MainActor @Observable final class WorkspaceNavigation {
+    var settings = false
 }
 
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var store: ClipStore!
     var status: NSStatusItem!
-    var panel: HistoryPanel!
-    var preferences: NSWindow?
+    var panel: NSWindow!
+    let navigation = WorkspaceNavigation()
     var hotKey: EventHotKeyRef?
     var handler: EventHandlerRef?
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -65,17 +38,20 @@ final class HistoryPanel: NSPanel {
         status.button?.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: "Pasteback")
         status.button?.target = self; status.button?.action = #selector(statusClicked)
         status.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
-        panel = HistoryPanel(contentRect: NSRect(x: 0, y: 0, width: 420, height: 480), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
-        panel.isFloatingPanel = true; panel.level = .floating; panel.isOpaque = false
-        panel.backgroundColor = .clear; panel.hasShadow = true; panel.isMovableByWindowBackground = true
-        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        let root = HistoryView(store: store, primary: { [weak self] item, mode in await self?.perform(item, mode: mode) ?? false }, close: { [weak self] in self?.panel.orderOut(nil) }, settings: { [weak self] in self?.showPreferences() })
-        let host = NSHostingView(rootView: root.clipShape(RoundedRectangle(cornerRadius: 16)))
-        panel.contentView = host
-        panel.delegate = self
-        if let saved = UserDefaults.standard.string(forKey: "panelOrigin") {
-            panel.setFrameOrigin(NSPointFromString(saved))
+        panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1120, height: 740), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
+        panel.title = "Pasteback"
+        panel.isReleasedWhenClosed = false
+        panel.minSize = NSSize(width: 900, height: 580)
+        panel.collectionBehavior = [.fullScreenPrimary]
+        panel.tabbingMode = .disallowed
+        panel.center()
+        if panel.setFrameUsingName("PastebackWorkspace") {
+            if !NSScreen.screens.contains(where: { $0.visibleFrame.intersects(panel.frame) }) { panel.center() }
         }
+        panel.setFrameAutosaveName("PastebackWorkspace")
+        let root = WorkspaceView(store: store, navigation: navigation, primary: { [weak self] item, mode in await self?.perform(item, mode: mode) ?? false }, close: { [weak self] in self?.panel.orderOut(nil) })
+        panel.contentView = NSHostingView(rootView: root)
+        panel.delegate = self
         var type = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
         InstallEventHandler(GetApplicationEventTarget(), { _, _, data in
             guard let data else { return noErr }
@@ -88,7 +64,7 @@ final class HistoryPanel: NSPanel {
         NotificationCenter.default.addObserver(self, selector: #selector(languageChanged), name: .pastebackLanguageChanged, object: nil)
         toggle()
     }
-    @objc private func languageChanged() { preferences?.title = tr("Pasteback 设置") }
+    @objc private func languageChanged() { panel.title = "Pasteback" }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         guard panel != nil else { return false }
         if !panel.isVisible { toggle() }
@@ -108,21 +84,13 @@ final class HistoryPanel: NSPanel {
         } else { toggle() }
     }
     @objc func toggle() {
+        if panel.isMiniaturized { panel.deminiaturize(nil); panel.makeKeyAndOrderFront(nil); return }
         if !panel.isVisible { PasteAction.shared.rememberTarget(NSWorkspace.shared.frontmostApplication) }
-        preferences?.orderOut(nil)
         if panel.isVisible { panel.orderOut(nil); return }
-        let mouse = NSEvent.mouseLocation
-        let screen = NSScreen.screens.first(where: { $0.frame.contains(mouse) }) ?? NSScreen.main!
-        let frame = screen.visibleFrame
-        if UserDefaults.standard.string(forKey: "panelOrigin") == nil || !NSScreen.screens.contains(where: { $0.visibleFrame.intersects(panel.frame) }) {
-            panel.setFrameOrigin(NSPoint(x: frame.midX - 210, y: frame.midY - 180))
-        }
+        if !NSScreen.screens.contains(where: { $0.visibleFrame.intersects(panel.frame) }) { panel.center() }
+        if panel.isMiniaturized { panel.deminiaturize(nil) }
         store.poll()
         NSApp.activate(ignoringOtherApps: true); panel.makeKeyAndOrderFront(nil)
-    }
-    func windowDidMove(_ notification: Notification) {
-        guard let window = notification.object as? NSWindow, window === panel else { return }
-        UserDefaults.standard.set(NSStringFromPoint(panel.frame.origin), forKey: "panelOrigin")
     }
     private var performingAction = false
     func perform(_ item: ClipItem, mode: ClipStore.CopyMode = .content) async -> Bool {
@@ -137,22 +105,15 @@ final class HistoryPanel: NSPanel {
     @objc func pause() { store.paused.toggle() }
     @objc func quit() { NSApp.terminate(nil) }
     func showHistory() {
-        preferences?.orderOut(nil)
-        if !panel.isVisible { toggle() }
-        else { NSApp.activate(ignoringOtherApps: true); panel.makeKeyAndOrderFront(nil) }
-    }
-    func windowWillClose(_ notification: Notification) {
-        guard let window = notification.object as? NSWindow, window === preferences else { return }
-        showHistory()
+        navigation.settings = false
+        NSApp.activate(ignoringOtherApps: true)
+        if panel.isMiniaturized { panel.deminiaturize(nil) }
+        panel.makeKeyAndOrderFront(nil)
     }
     @objc func showPreferences() {
-        panel.orderOut(nil)
-        if preferences == nil {
-            preferences = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 540, height: 650), styleMask: [.titled, .closable, .miniaturizable], backing: .buffered, defer: false)
-            preferences?.title = tr("Pasteback 设置"); preferences?.isReleasedWhenClosed = false
-            preferences?.delegate = self
-            preferences?.contentView = NSHostingView(rootView: PreferencesView(back: { [weak self] in self?.showHistory() }, store: store)); preferences?.center()
-        }
-        NSApp.activate(ignoringOtherApps: true); preferences?.makeKeyAndOrderFront(nil)
+        navigation.settings = true
+        NSApp.activate(ignoringOtherApps: true)
+        if panel.isMiniaturized { panel.deminiaturize(nil) }
+        panel.makeKeyAndOrderFront(nil)
     }
 }
