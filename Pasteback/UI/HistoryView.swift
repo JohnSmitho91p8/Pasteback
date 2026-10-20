@@ -6,6 +6,7 @@ private enum ClearAction { case clipboard, all }
 
 struct HistoryView: View {
     @Bindable var store: ClipStore
+    var primary: (ClipItem, ClipStore.CopyMode) async -> Bool
     var close: () -> Void
     var settings: () -> Void
     @State private var query = ""
@@ -15,7 +16,7 @@ struct HistoryView: View {
     @State private var clearAction: ClearAction = .clipboard
     @State private var confirmClear = false
     @FocusState private var searching: Bool
-    private var filtered: [ClipItem] { store.items.filter { query.isEmpty || $0.text.localizedCaseInsensitiveContains(query) || $0.source.localizedCaseInsensitiveContains(query) } }
+    private var filtered: [ClipItem] { store.items.filter { query.isEmpty || $0.text.localizedCaseInsensitiveContains(query) || $0.source.localizedCaseInsensitiveContains(query) || $0.files.contains { $0.name.localizedCaseInsensitiveContains(query) || $0.path.localizedCaseInsensitiveContains(query) } } }
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 10) {
@@ -49,11 +50,23 @@ struct HistoryView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 5) {
-                            ForEach(filtered) { item in
-                                ClipRow(item: item, selected: selection == item.id, copy: { use(item) })
-                                    .contentShape(Rectangle()).onTapGesture { selection = item.id; preview = item }
+                            ForEach(Array(filtered.enumerated()), id: \.element.id) { index, item in
+                                ClipRow(item: item, number: index < 9 ? index + 1 : nil, selected: selection == item.id, copy: { use(item) })
+                                    .contentShape(Rectangle())
+                                    .gesture(TapGesture(count: 2).exclusively(before: TapGesture(count: 1)).onEnded { gesture in
+                                        selection = item.id
+                                        switch gesture {
+                                        case .first: activate(item)
+                                        case .second: preview = item
+                                        }
+                                    })
                                     .contextMenu {
                                         Button(tr("复制到剪贴板")) { use(item) }
+                                        if !item.files.isEmpty {
+                                            Button(tr("复制路径")) { use(item, mode: .paths) }
+                                            Button(tr("复制文件名")) { use(item, mode: .names) }
+                                            Button(tr("在Finder中显示")) { NSWorkspace.shared.activateFileViewerSelecting(item.files.map(\.url)) }
+                                        }
                                         Button(item.pinned ? tr("取消固定") : tr("固定")) { store.pin(item) }
                                         Button(tr("删除"), role: .destructive) { store.remove(item) }
                                     }.id(item.id)
@@ -87,7 +100,12 @@ struct HistoryView: View {
         }
         .onKeyPress(.downArrow) { move(1); return .handled }
         .onKeyPress(.upArrow) { move(-1); return .handled }
-        .onKeyPress(.return) { if let item = filtered.first(where: { $0.id == selection }) { use(item) }; return .handled }
+        .onKeyPress(.return, phases: .down) { press in
+            if let item = filtered.first(where: { $0.id == selection }) {
+                activate(item, mode: press.modifiers.contains(.option) && !item.files.isEmpty ? .paths : .content)
+            }
+            return .handled
+        }
         .alert(clearAction == .clipboard ? tr("清空当前剪贴板？") : tr("清空历史和剪贴板？"), isPresented: $confirmClear) {
             Button(tr("取消"), role: .cancel) {}
             Button(tr("清空"), role: .destructive) {
@@ -101,12 +119,20 @@ struct HistoryView: View {
         .onExitCommand(perform: close)
         .background {
             Group {
+                ForEach(1...9, id: \.self) { number in
+                    Button("") {
+                        guard preview == nil, filtered.indices.contains(number - 1) else { return }
+                        selection = filtered[number - 1].id
+                        activate(filtered[number - 1])
+                    }.keyboardShortcut(KeyEquivalent(Character(String(number))), modifiers: .command)
+                }
                 Button("") { if let item = filtered.first(where: { $0.id == selection }) { store.pin(item) } }.keyboardShortcut("p")
                 Button("") { if let item = filtered.first(where: { $0.id == selection }) { store.remove(item); selection = filtered.first?.id } }.keyboardShortcut(.delete)
             }.hidden()
         }
     }
-    private func use(_ item: ClipItem) { Task { copied = await store.copy(item) } }
+    private func activate(_ item: ClipItem, mode: ClipStore.CopyMode = .content) { Task { copied = await primary(item, mode) } }
+    private func use(_ item: ClipItem, mode: ClipStore.CopyMode = .content) { Task { copied = await store.copy(item, mode: mode) } }
     private func move(_ offset: Int) {
         guard !filtered.isEmpty else { return }
         let index = filtered.firstIndex(where: { $0.id == selection }) ?? 0
@@ -116,14 +142,20 @@ struct HistoryView: View {
 
 struct ClipRow: View {
     let item: ClipItem
+    let number: Int?
     let selected: Bool
     var copy: () -> Void
+    @State private var filesAvailable = true
     var body: some View {
         HStack(alignment: .top, spacing: 11) {
+            if let number { Text(String(number)).font(.system(size: 10, design: .monospaced)).foregroundStyle(.tertiary).frame(width: 8) }
             Image(nsImage: AppIconCache.shared.icon(item.sourceID))
                 .resizable().frame(width: 25, height: 25).padding(.top, 3)
             VStack(alignment: .leading, spacing: 7) {
-                if let name = item.imageName {
+                if let first = item.files.first {
+                    if item.files.count > 1 { Text(String(format: tr("文件数量"), item.files.count)).font(.caption) }
+                    FileReferenceRow(file: first)
+                } else if let name = item.imageName {
                     ClipThumbnail(name: name).frame(maxWidth: 270, maxHeight: 90)
                 } else { Text(String(item.text.prefix(240))).font(.system(size: 13)).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading) }
                 HStack(spacing: 5) {
@@ -134,7 +166,16 @@ struct ClipRow: View {
                 }.font(.system(size: 10)).foregroundStyle(.secondary)
             }
             Button(action: copy) { Image(systemName: "doc.on.doc").frame(width: 24, height: 28) }
-                .buttonStyle(.borderless).help(tr("复制整条内容")).accessibilityLabel(tr("复制整条内容"))
+                .disabled(!filesAvailable).buttonStyle(.borderless).help(tr("复制整条内容")).accessibilityLabel(tr("复制整条内容"))
+        }.task(id: item.filesData) {
+            let files = item.files
+            guard !files.isEmpty else { filesAvailable = true; return }
+            while !Task.isCancelled {
+                var exists = true
+                for file in files { if !(await FileReferenceService.shared.status(file).exists) { exists = false } }
+                filesAvailable = exists
+                do { try await Task.sleep(for: .seconds(2)) } catch { return }
+            }
         }.padding(11).frame(maxWidth: .infinity, alignment: .leading)
             .background(selected ? Color.teal.opacity(0.11) : Color.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 10))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(selected ? Color.teal.opacity(0.22) : .clear, lineWidth: 1))
@@ -149,6 +190,8 @@ struct PreferencesView: View {
     @State private var launchError: String?
     @Bindable private var language = AppLanguage.shared
     @Bindable private var updater = UpdateChecker.shared
+    @Bindable private var pasteAction = PasteAction.shared
+    @AppStorage("filePathFormat") private var pathFormat = "shell"
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -168,6 +211,14 @@ struct PreferencesView: View {
                     }
                 }
                 Text(tr("语言说明")).font(.caption).foregroundStyle(.secondary)
+                Toggle(tr("选中后自动粘贴"), isOn: Binding(get: { pasteAction.enabled }, set: { pasteAction.setEnabled($0) }))
+                Text(tr("默认只复制。开启后，回车、双击或⌘1–9会粘贴到呼出面板前的应用。")).font(.caption).foregroundStyle(.secondary)
+                Picker(tr("复制路径格式"), selection: $pathFormat) {
+                    Text(tr("终端安全格式")).tag("shell")
+                    Text(tr("原样路径")).tag("raw")
+                    Text(tr("@引用格式")).tag("mention")
+                }
+                Text(tr("文件只保存引用。⌥↩复制路径；终端格式用空格分隔，其他格式每行一个。")).font(.caption).foregroundStyle(.secondary)
                 Toggle(tr("暂停记录"), isOn: $store.paused)
                 Toggle(tr("登录时启动 Pasteback"), isOn: $launch).onChange(of: launch) { _, value in
                     do { if value { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() } }
@@ -241,22 +292,28 @@ struct ClipDetailView: View {
     // Snapshot values remain valid while the sheet dismisses after deletion.
     private let text: String
     private let imageName: String?
+    private let files: [FileReference]
+    @State private var filesAvailable = true
     private let source: String
     @Environment(\.dismiss) private var dismiss
     @State private var copied = false
     @State private var confirmDelete = false
     init(item: ClipItem, store: ClipStore) {
         self.item = item; self.store = store
-        text = item.text; imageName = item.imageName; source = item.source
+        text = item.text; imageName = item.imageName; source = item.source; files = item.files
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text(imageName == nil ? tr("文字内容") : tr("图片内容")).font(.headline)
+                Text(!files.isEmpty ? tr("文件内容") : imageName == nil ? tr("文字内容") : tr("图片内容")).font(.headline)
                 Spacer()
                 Button(tr("完成")) { dismiss() }.keyboardShortcut(.cancelAction)
             }
-            if let name = imageName {
+            if !files.isEmpty {
+                ScrollView { LazyVStack(alignment: .leading, spacing: 12) { ForEach(files, id: \.path) { FileReferenceRow(file: $0) } } }
+                Button(tr("复制路径")) { Task { copied = await store.copy(item, mode: .paths) } }
+                Text(tr("删除记录只移除引用，不删除原文件。")).font(.caption).foregroundStyle(.secondary)
+            } else if let name = imageName {
                 ClipThumbnail(name: name).frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView {
@@ -264,7 +321,7 @@ struct ClipDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading).padding(12)
                 }.background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 8))
             }
-            Text(imageName == nil ? tr("拖选文字后按 ⌘C 可复制选中部分。") : tr("点击下方按钮复制原始图片。"))
+            Text(!files.isEmpty ? tr("文件只保存引用，原文件移动或删除后需重新复制。") : imageName == nil ? tr("拖选文字后按 ⌘C 可复制选中部分。") : tr("点击下方按钮复制原始图片。"))
                 .font(.caption).foregroundStyle(.secondary)
             Text(trFormat("来源格式", source)).font(.caption).foregroundStyle(.secondary)
             HStack {
@@ -272,7 +329,15 @@ struct ClipDetailView: View {
                     .buttonStyle(.bordered)
                 Spacer()
                 Button(copied ? tr("已复制 ✓") : tr("复制全部")) { Task { copied = await store.copy(item) } }
-                    .buttonStyle(.borderedProminent).tint(.teal)
+                    .disabled(!filesAvailable).buttonStyle(.borderedProminent).tint(.teal)
+            }
+        }.task {
+            guard !files.isEmpty else { return }
+            while !Task.isCancelled {
+                var exists = true
+                for file in files { if !(await FileReferenceService.shared.status(file).exists) { exists = false } }
+                filesAvailable = exists
+                do { try await Task.sleep(for: .seconds(2)) } catch { return }
             }
         }.padding(20).frame(width: 380, height: 400)
         .environment(\.locale, AppLanguage.shared.locale)
