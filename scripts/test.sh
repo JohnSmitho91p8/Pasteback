@@ -19,3 +19,6 @@ swiftc -O -swift-version 5 Pasteback/Storage/HistorySchema.swift Pasteback/Stora
 "$output_dir/Legacy" "$output_dir/fixture-rollback"
 "$output_dir/Migrate" "$output_dir/fixture-rollback" rollback
 # Signed public release archive tests run after packaging (see prepare-update.sh).
+
+swiftc -O -parse-as-library -swift-version 5 Pasteback/App/Localization.swift Pasteback/UI/CppPreview.swift Tests/CppPreviewTests.swift -o "$output_dir/CppPreview"
+"$output_dir/CppPreview"
