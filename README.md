@@ -40,3 +40,7 @@ Choose **Check for Updates…** in Settings or the menu-bar menu, then follow th
 Clipboard history stays on your Mac and is not uploaded or synced. You can pause recording and exclude apps. History is not encrypted by Pasteback, and unmarked passwords may still be recorded.
 
 Checking for and downloading updates connects to GitHub without sending clipboard contents. See the [privacy details](PRIVACY.md).
+
+## License
+
+Pasteback is open source under the [MIT License](LICENSE). Third-party components retain their respective licenses.
