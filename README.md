@@ -8,6 +8,7 @@ Find the text, code and images you copied — right from your Mac’s menu bar.
 
 - Search text, code, images and file references, with your latest copies first.
 - Preview text and images; copy a whole item or select just the text you need.
+- Read C++ with syntax highlighting, line numbers, a monospaced font and horizontal scrolling. Original whitespace is preserved; tabs display at four spaces. Choose Automatic, Plain text or C++ for each preview.
 - Use ⌘1–9 for the first nine search results. Copy files as objects or paths (⌥↩).
 - Optionally paste into the previous app with Return or a double-click; Accessibility permission is required and the default remains copy-only.
 - Pin useful items, delete individual entries or clear your history.
