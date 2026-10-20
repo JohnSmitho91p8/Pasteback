@@ -4,28 +4,21 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <channel>
         <title>Pasteback</title>
         <item>
-            <title>0.4.0</title>
-            <pubDate>Tue, 20 Oct 2026 23:46:32 +0800</pubDate>
-            <sparkle:version>6</sparkle:version>
-            <sparkle:shortVersionString>0.4.0</sparkle:shortVersionString>
+            <title>0.4.1</title>
+            <pubDate>Wed, 21 Oct 2026 00:03:31 +0800</pubDate>
+            <sparkle:version>7</sparkle:version>
+            <sparkle:shortVersionString>0.4.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.4.0 — A roomier workspace / 更从容的窗口
+            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.4.1 — C++ code previews / C++ 代码预览
 
-• A standard Mac window with dragging, resizing, minimization and full screen. Window size and position are remembered.
-• Persistent sidebar navigation for history and Settings. Return without losing your search and selection.
-• Browse history and full content side by side. Copy whole entries or select text in the detail pane.
+C++ syntax highlighting, line numbers, monospaced text and horizontal scrolling. Automatically detects common C++ snippets; choose C++ or Plain text manually when needed. Follows the Mac's light/dark appearance. Preserves original indentation and clipboard content; tabs display at four spaces. Long code previews are bounded; Copy All still copies the full original.
 
-• 标准 Mac 窗口，支持自由拖动、缩放、最小化和全屏，记住窗口大小与位置。
-• 历史与设置使用同一窗口，侧栏随时切换，返回保留搜索与选择。
-• 列表与详情并排，单击直接查看完整内容，可复制全部或拖选文字。
-
-This release focuses only on window layout. Clipboard capture, privacy settings and existing shortcuts remain available. Update inside Pasteback; your history is preserved.
-本次仅改造窗口。保留既有记录能力、隐私设置及快捷键，历史记录保留。
+C++ 语法高亮、行号、等宽字体与横向滚动；自动识别常见代码，也可手动切换 C++ / 纯文本。适配明暗外观，保留原始空格、缩进和复制内容，Tab 按四空格宽度显示。长代码限制预览长度，复制全部保留完整原文。
 ]]></description>
-            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.4.0/Pasteback-0.4.0-universal.zip" length="2894553" type="application/octet-stream" sparkle:edSignature="TTEMfcLlStrz8EwMaQ/OUW/tVGCPA2kgSELc7UbxeSgVQ07EcNUcHvWF6igufzyn1o8bDHNRMCGW2J0csqYGBQ=="></enclosure>
+            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.4.1/Pasteback-0.4.1-universal.zip" length="2969858" type="application/octet-stream" sparkle:edSignature="PxhAuFB8tNK+iScsXr4eXuxDTVEGUkaxdmCLOs7yrum2k7Z/jdZxh59f//9RiHbQLVTGLweLDEcw+Bz8CxT+Bw=="></enclosure>
         </item>
     </channel>
 </rss><!-- sparkle-signatures:
-edSignature: eGW0CY4qUM40vAckzCvKZjMckVPE/PipesY6+FuoCwuSX6XRMRQPFEZFBOwGYaNE2Kq4XVXQLthU94gJ3p87Dw==
-length: 2105
+edSignature: g569o0wO2jRfZlG7fJV4rEp8gTeo9V+qZyj7L1vYA7taA6p15jRAoLtrhjw4P3bW/fJaMrHIoRT4bNgmSNAOCQ==
+length: 1850
 -->
