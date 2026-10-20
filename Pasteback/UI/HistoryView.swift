@@ -142,6 +142,7 @@ struct ClipRow: View {
 }
 
 struct PreferencesView: View {
+    var back: () -> Void
     @Bindable var store: ClipStore
     @State private var confirmClear = false
     @State private var launch = SMAppService.mainApp.status == .enabled
@@ -149,7 +150,16 @@ struct PreferencesView: View {
     @Bindable private var language = AppLanguage.shared
     @Bindable private var updater = UpdateChecker.shared
     var body: some View {
-        Form {
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: back) { Label(tr("返回历史"), systemImage: "chevron.left") }
+                    .keyboardShortcut("[", modifiers: .command)
+                Spacer()
+                Text(tr("设置")).font(.headline)
+                Spacer()
+            }.padding(.horizontal, 20).padding(.vertical, 12)
+            Divider()
+            Form {
             Section(tr("通用")) {
                 Picker(tr("语言"), selection: $language.selection) {
                     Text(tr("跟随系统")).tag("auto")
@@ -188,7 +198,8 @@ struct PreferencesView: View {
                 Text(tr("保护范围说明")).font(.caption).foregroundStyle(.secondary)
                 Button(tr("打开本地数据文件夹")) { NSWorkspace.shared.open(ClipStore.directory) }
             }
-        }.formStyle(.grouped).frame(width: 540, height: 650)
+        }.formStyle(.grouped)
+        }.frame(width: 540, height: 650)
         .environment(\.locale, AppLanguage.shared.locale)
         .alert(tr("清空全部历史？"), isPresented: $confirmClear) {
             Button(tr("取消"), role: .cancel) {}
