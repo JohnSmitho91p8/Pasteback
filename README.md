@@ -6,7 +6,7 @@ A lightweight clipboard history app for **macOS 14 or later**, built with SwiftU
 
 ## Install
 
-1. Download `Pasteback-0.1.0-universal.dmg` (Apple silicon and Intel) from Releases.
+1. Download the latest `Pasteback-*-universal.dmg` (Apple silicon and Intel) from Releases.
 2. Open the disk image and drag **Pasteback.app** into **Applications**.
 3. Launch Pasteback. Click its menu-bar icon to open clipboard history; right-click for settings and quit.
 
@@ -27,9 +27,9 @@ Return copies an item; switch to the destination app and press ⌘V. Automatic p
 
 ## Updates
 
-Choose **Check for Updates…**. Pasteback queries this repository’s latest stable release. When a newer version exists, it offers to open that release’s download page. Download the DMG, quit Pasteback, and replace the app in Applications. Local history is kept separately.
+Starting with 0.2.0, choose **Check for Updates…**, review the release notes, then install and relaunch directly in Pasteback. Sparkle verifies the signed feed and update archive before installation. Local history stays separate and is preserved. Users on 0.1.x must install 0.2.0 manually once.
 
-This version checks and links to downloads; it does **not** silently download, replace or restart itself. There is no automatic background update check.
+Updates are user initiated. There is no background update polling or silent installation. Updates cannot be installed while running from a read-only disk image; drag the app into Applications first.
 
 ## Privacy
 
@@ -43,7 +43,7 @@ Use Control–Shift–Command–4 (selection) or Control–Shift–Command–3 (
 
 ## Build
 
-Open `Pasteback.xcodeproj` in Xcode, choose **Pasteback / My Mac**, then run. No third-party packages or API keys are required.
+Open `Pasteback.xcodeproj` in Xcode, choose **Pasteback / My Mac**, then run. Xcode resolves the pinned Sparkle 2.10.0 package. No API key is required.
 
 For a universal local build and distributable archives:
 
@@ -61,7 +61,7 @@ swiftc -O -swift-version 5 Pasteback/App/Localization.swift Pasteback/Storage/Cl
 /tmp/PastebackCaptureTests
 ```
 
-Additional tests cover newest-first sorting, deletion, clearing, language matching, update version comparison and trusted release URLs. Tests use temporary or in-memory data, not the user’s clipboard history.
+Additional tests cover newest-first sorting, deletion, clearing, language matching, signed update configuration and archive validation. Tests use temporary or in-memory data, not the user’s clipboard history.
 
 ## Release workflow
 
