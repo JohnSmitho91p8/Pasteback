@@ -5,21 +5,6 @@ import Observation
 import ImageIO
 import UniformTypeIdentifiers
 
-@Model final class ClipItem {
-    var id: UUID
-    var text: String
-    var imageName: String?
-    var contentHash: String
-    var source: String
-    var sourceID: String
-    var date: Date
-    var pinned: Bool
-    init(text: String, imageName: String?, hash: String, source: String, sourceID: String) {
-        id = UUID(); self.text = text; self.imageName = imageName; contentHash = hash
-        self.source = source; self.sourceID = sourceID; date = .now; pinned = false
-    }
-}
-
 @MainActor @Observable final class ClipStore {
     let container: ModelContainer
     var items: [ClipItem] = []
@@ -50,11 +35,12 @@ import UniformTypeIdentifiers
     private struct Capture {
         let text: String
         let image: Data?
+        let files: [FileReference]
         let source: String
         let bundle: String
         let date: Date
         let generation: Int
-        var byteCount: Int { image?.count ?? text.utf8.count }
+        var byteCount: Int { image?.count ?? (text.utf8.count + files.reduce(0) { $0 + $1.path.utf8.count }) }
     }
     private var pending: [Capture] = []
     private var retryChange = -1
@@ -65,24 +51,15 @@ import UniformTypeIdentifiers
     private var appObserver: NSObjectProtocol?
     private var captureGeneration = 0
     private var count: Int
-    init(inMemory: Bool = false, monitor: Bool = true, pasteboard: NSPasteboard = .general, storageDirectory: URL? = nil) throws {
+    init(inMemory: Bool = false, monitor: Bool = true, pasteboard: NSPasteboard = .general, storageDirectory: URL? = nil, preparedContainer: ModelContainer? = nil) throws {
         self.pasteboard = pasteboard
         self.storageDirectory = storageDirectory ?? Self.directory
         count = pasteboard.changeCount
         lastExternalApp = NSWorkspace.shared.frontmostApplication
-        if !inMemory {
-        try FileManager.default.createDirectory(at: Self.directory, withIntermediateDirectories: true)
-        try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: Self.directory.path)
-        // Tighten permissions on historical files from earlier builds as well.
-        for url in try FileManager.default.contentsOfDirectory(at: Self.directory, includingPropertiesForKeys: nil) {
-            let isDirectory = (try url.resourceValues(forKeys: [.isDirectoryKey])).isDirectory == true
-            try FileManager.default.setAttributes([.posixPermissions: isDirectory ? 0o700 : 0o600], ofItemAtPath: url.path)
-        }
-        }
-        let config = inMemory
-            ? ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)
-            : ModelConfiguration(url: Self.directory.appending(path: "History.store"), cloudKitDatabase: .none)
-        container = try ModelContainer(for: ClipItem.self, configurations: config)
+        if let preparedContainer { container = preparedContainer }
+        else if inMemory {
+            container = try ModelContainer(for: Schema(versionedSchema: PastebackSchemaV2.self), configurations: [ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none)])
+        } else { container = try HistoryDatabase.open(directory: self.storageDirectory) }
         reload()
         guard monitor else { return }
         appObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) { [weak self] note in
@@ -134,7 +111,7 @@ import UniformTypeIdentifiers
             guard generation == captureGeneration, count == previousCount, !paused, !isExcluded(bundle) else { return }
             guard let snapshot else { return } // Ownership changed while reading: poll again.
             if snapshot.sensitive { count = change; return }
-            if snapshot.text.isEmpty && snapshot.image == nil {
+            if snapshot.text.isEmpty && snapshot.image == nil && snapshot.files.isEmpty {
                 readAttempts += 1
                 if (snapshot.supported || snapshot.emptyTypes) && readAttempts < 50 { return }
                 count = change
@@ -146,13 +123,13 @@ import UniformTypeIdentifiers
                 error = tr("内容过大，未记录：图片最多128MB，文字最多2MB。")
                 return
             }
-            let capture = Capture(text: snapshot.text, image: snapshot.image, source: source, bundle: bundle, date: date, generation: generation)
+            let capture = Capture(text: snapshot.text, image: snapshot.image, files: snapshot.files, source: source, bundle: bundle, date: date, generation: generation)
             guard pending.count < 32, pending.reduce(0, { $0 + $1.byteCount }) + capture.byteCount <= 256_000_000 else {
                 error = tr("待处理内容过多，请稍候再复制。")
                 return
             }
             pending.append(capture)
-            error = nil
+            error = snapshot.truncated ? tr("文件过多，仅记录前200个。") : nil
             if !processing { processPending() }
         }
     }
@@ -167,16 +144,18 @@ import UniformTypeIdentifiers
                 let capture = pending.removeFirst()
                 guard capture.generation == captureGeneration, !paused, !isExcluded(capture.bundle), capture.image == nil || recordImages else { continue }
                 do {
-                    let prepared = try await ClipProcessor.shared.prepare(text: capture.text, image: capture.image, outputDirectory: storageDirectory)
+                    let prepared = try await ClipProcessor.shared.prepare(text: capture.text, image: capture.image, files: capture.files, outputDirectory: storageDirectory)
                     guard capture.generation == captureGeneration, !paused, !isExcluded(capture.bundle), capture.image == nil || recordImages else {
                         if let name = prepared.imageName { await ClipProcessor.shared.remove(name, from: storageDirectory) }
                         continue
                     }
                     if let old = items.first(where: { $0.contentHash == prepared.hash }) {
                         old.date = capture.date; old.source = capture.source; old.sourceID = capture.bundle
+                        if prepared.filesData != nil { old.updateFiles(prepared.filesData) }
                         if let name = prepared.imageName { await ClipProcessor.shared.remove(name, from: storageDirectory) }
                     } else {
                         let item = ClipItem(text: capture.text, imageName: prepared.imageName, hash: prepared.hash, source: capture.source, sourceID: capture.bundle)
+                        item.updateFiles(prepared.filesData)
                         item.date = capture.date
                         container.mainContext.insert(item); items.append(item)
                     }
@@ -205,25 +184,53 @@ import UniformTypeIdentifiers
     }
     func clear() { captureGeneration += 1; pending.removeAll(); count = pasteboard.changeCount; for item in items { remove(item, persist: false) }; save() }
     func pin(_ item: ClipItem) { item.pinned.toggle(); save() }
-    func copy(_ item: ClipItem) async -> Bool {
+    enum CopyMode { case content, paths, names }
+    func copy(_ item: ClipItem, mode: CopyMode = .content, to destination: NSPasteboard? = nil) async -> Bool {
         let generation = captureGeneration
-        let p = NSPasteboard.general
-        if let name = item.imageName {
+        let p = destination ?? pasteboard
+        let files = item.files
+        let imageName = item.imageName
+        let text = item.text
+        if !files.isEmpty {
+            if mode == .content {
+                guard await FileReferenceService.shared.allExist(files) else { error = tr("文件已不存在，仍可复制路径。"); return false }
+            }
+            guard generation == captureGeneration else { return false }
+            p.clearContents()
+            let success: Bool
+            switch mode {
+            case .content: success = p.writeObjects(files.map { $0.url as NSURL })
+            case .paths:
+                let format = FilePathFormat(rawValue: UserDefaults.standard.string(forKey: "filePathFormat") ?? "shell") ?? .shell
+                success = p.setString(format.render(files), forType: .string)
+            case .names: success = p.setString(files.map(\.name).joined(separator: "\n"), forType: .string)
+            }
+            if p.name == pasteboard.name { count = p.changeCount }
+            return success
+        }
+        if let name = imageName {
             guard let data = await ClipProcessor.shared.read(name, from: storageDirectory) else { error = tr("图片文件无法读取"); return false }
             guard generation == captureGeneration else { return false }
             p.clearContents(); p.setData(data, forType: NSPasteboard.PasteboardType(UTType(filenameExtension: (name as NSString).pathExtension)?.identifier ?? UTType.png.identifier))
-        } else { p.clearContents(); p.setString(item.text, forType: .string) }
-        count = p.changeCount
+        } else { p.clearContents(); p.setString(text, forType: .string) }
+        if p.name == pasteboard.name { count = p.changeCount }
         return true
     }
+
 }
 
 // Image conversion, hashing and file IO never run on the UI actor.
 actor ClipProcessor {
     static let shared = ClipProcessor()
-    struct Prepared: Sendable { let hash: String; let imageName: String? }
+    struct Prepared: Sendable { let hash: String; let imageName: String?; var filesData: Data? = nil }
     private var directory: URL { URL.applicationSupportDirectory.appending(path: "Pasteback", directoryHint: .isDirectory) }
-    func prepare(text: String, image: Data?, outputDirectory: URL? = nil) throws -> Prepared {
+    func prepare(text: String, image: Data?, files: [FileReference] = [], outputDirectory: URL? = nil) throws -> Prepared {
+        if !files.isEmpty {
+            let paths = files.map(\.path).sorted()
+            let identity = try JSONEncoder().encode(paths)
+            let hash = SHA256.hash(data: Data("files\0".utf8) + identity).map { String(format: "%02x", $0) }.joined()
+            return Prepared(hash: hash, imageName: nil, filesData: try JSONEncoder().encode(files))
+        }
         let data = image ?? Data(text.utf8)
         let hash = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
         var name: String?
@@ -275,13 +282,24 @@ actor PasteboardReader {
         let supported: Bool
         let sensitive: Bool
         let emptyTypes: Bool
+        var files: [FileReference] = []
+        var truncated = false
     }
-    func read(name: String, change: Int, includeImages: Bool) -> Snapshot? {
+    func read(name: String, change: Int, includeImages: Bool) async -> Snapshot? {
         let board = NSPasteboard(name: NSPasteboard.Name(name))
         guard board.changeCount == change else { return nil }
         let types = Set((board.types ?? []).map(\.rawValue))
         let sensitive = !types.isDisjoint(with: ["org.nspasteboard.ConcealedType", "org.nspasteboard.TransientType", "org.nspasteboard.AutoGeneratedType", "de.petermaurer.TransientPasteboardType"])
         if sensitive { return Snapshot(text: "", image: nil, supported: false, sensitive: true, emptyTypes: false) }
+        // Finder commonly supplies file URLs, names and icons together. Files win.
+        if types.contains(NSPasteboard.PasteboardType.fileURL.rawValue) {
+            let urls = board.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
+            let files = await FileReferenceService.shared.references(urls)
+            guard board.changeCount == change else { return nil }
+            if !files.isEmpty {
+                return Snapshot(text: "", image: nil, supported: true, sensitive: false, emptyTypes: false, files: files, truncated: urls.count > FileReferenceService.maximumFiles)
+            }
+        }
         let imageTypes: [NSPasteboard.PasteboardType] = [.png, .tiff, .init(UTType.jpeg.identifier), .init(UTType.heic.identifier), .init(UTType.gif.identifier), .init(UTType.webP.identifier)]
         let supported = types.contains(NSPasteboard.PasteboardType.string.rawValue) || (includeImages && imageTypes.contains { types.contains($0.rawValue) })
         let text = board.string(forType: .string) ?? ""
