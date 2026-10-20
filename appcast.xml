@@ -4,17 +4,23 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <channel>
         <title>Pasteback</title>
         <item>
-            <title>0.2.0</title>
-            <pubDate>Tue, 20 Oct 2026 11:37:42 +0800</pubDate>
-            <sparkle:version>3</sparkle:version>
-            <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
+            <title>0.2.1</title>
+            <pubDate>Tue, 20 Oct 2026 11:55:55 +0800</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.2.0: signed in-app updates. Clipboard history stays on your Mac.
+            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.2.1
+
+更快、更稳定的复制记录：50 毫秒检查周期，后台读取文字和图片，延迟数据自动重试。支持 PNG、TIFF、JPEG、HEIC、GIF、WebP，保留代码原有换行与缩进。
+
+设置顶部新增“返回历史”（⌘[），关闭设置也会回到历史。清理了个人 iCloud 项目位置和内部开发规划等界面文案。
+
+Faster clipboard monitoring and background provider reads. Back to History navigation and clearer privacy copy. Clipboard history stays local; sensitive and excluded content remains skipped.
 ]]></description>
-            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.2.0/Pasteback-0.2.0-universal.zip" length="2614088" type="application/octet-stream" sparkle:edSignature="Ky8RvXHQAWSo2i5CzYOLpyyECq8V6S5CR0BvBdVePSPole8vPs2p7joy6VesHNOPyopNWL2IogtKUSw9dHv1Dw=="></enclosure>
+            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.2.1/Pasteback-0.2.1-universal.zip" length="2640956" type="application/octet-stream" sparkle:edSignature="2Oyqiz6B3aA/lN6rPhTbhkcJas3qPr/DFBt2uzv5A2sBo/oUV6mjQvPXzolug6g2sIV2EKYi91n3U9NK0o+VCQ=="></enclosure>
         </item>
     </channel>
 </rss><!-- sparkle-signatures:
-edSignature: LBgVBDelx/6EzEwz6wMVdlyaktC6I+Nrl95SAGWugA2ywKo5amnQJ7ReJijGoQVUB4qk1tegGIxPBTCm9g97CA==
-length: 1217
+edSignature: pBNlneplkbnjt37QOAIyZ+ZTBiksvRU9/bWaXM8hpAHnM60NytX+VEsrIzccguUMn2bFHXm9X6WMdAZennMxAw==
+length: 1708
 -->
