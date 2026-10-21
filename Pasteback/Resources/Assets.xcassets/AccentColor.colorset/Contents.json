@@ -1,0 +1,15 @@
+{
+  "colors": [
+    {
+      "idiom": "universal",
+      "color": {
+        "platform": "osx",
+        "reference": "systemTealColor"
+      }
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
