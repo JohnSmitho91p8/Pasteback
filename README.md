@@ -43,7 +43,7 @@ Copy text, code or an image in another app, then press **⌘⇧V** to find it. I
 
 For a screenshot, use **⌃⇧⌘4** to copy a selection or **⌃⇧⌘3** to copy the screen. Screenshots saved only as files are not added to clipboard history.
 
-Use the sidebar to switch between history and Settings. **Back to History** or **⌘[** returns to your previous search and selection. Closing the window keeps recording active; the menu bar opens the full window, while **⌘⇧V** opens the quick panel.
+Use the sidebar to filter All, Text, Images, Links, Code or Pinned items. Search in the unified toolbar (**⌘F**); **Esc** clears the query and returns to the list. The toolbar gear (**⌘,**) opens Settings; **Back to History** or **⌘[** returns to your previous search and selection. The preview column hides when there are no results. Closing the window keeps recording active; the menu bar opens the full window, while **⌘⇧V** opens the quick panel.
 
 For file references, right-click to copy paths, copy names or reveal files in Finder. Only references are saved; deleting history never deletes original files. Moved or deleted files must be copied again. Paths can use shell quoting (default), raw text or @ references.
 
