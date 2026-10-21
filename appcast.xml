@@ -4,31 +4,24 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <channel>
         <title>Pasteback</title>
         <item>
-            <title>0.5.0</title>
-            <pubDate>Wed, 21 Oct 2026 16:15:07 +0800</pubDate>
-            <sparkle:version>8</sparkle:version>
-            <sparkle:shortVersionString>0.5.0</sparkle:shortVersionString>
+            <title>0.5.1</title>
+            <pubDate>Wed, 21 Oct 2026 16:29:29 +0800</pubDate>
+            <sparkle:version>9</sparkle:version>
+            <sparkle:shortVersionString>0.5.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.5.0 — Choose, paste, keep going / 选中，粘贴，继续工作
+            <description sparkle:format="plain-text"><![CDATA[Pasteback 0.5.1 — Quieter when idle / 空闲时更安静
 
-• Lightweight non-activating quick panel with search, arrow-key selection, Return, Esc, Cmd1–9 and Option-Return for file paths. Your full window remains available from the menu bar.
-• Short, skippable automatic-paste setup. Enable it after granting Accessibility permission; copy-only mode remains available.
-• Customizable global shortcut with conflict protection. Pinned items appear above recent items.
-• Subtle menu-bar copy feedback. C++ previews remain in the full workspace.
-• Universal Clipboard source label when a cross-device marker is available; the originating device is not guessed.
+Releases quick-panel and workspace views when hidden, closed or minimized. Search and selected-item state stay available when the workspace reopens. Clipboard monitoring continues in the background. Includes the 0.5 quick-access panel, custom shortcuts, pinned sections and optional automatic-paste setup.
 
-• 快捷浮层用于日常找回与粘贴，大窗口用于整理和阅读 C++。
-• 可跳过的首次引导，用户主动开启并授权后启用自动粘贴。
-• 自定义快捷键、冲突保护、固定项独立置顶与克制的复制反馈。
-• 跨设备标记可用时显示“通用剪贴板”，不推测具体来源设备。
+浮层隐藏、工作窗口关闭或最小化时释放界面资源，重新打开仍保留搜索与选择，后台继续记录。包含 0.5 的快捷浮层、自定义快捷键、固定项置顶及可选自动粘贴引导。
 
-History stays on this Mac. This testing build is not Apple notarized; first-launch Gatekeeper restrictions remain.
-历史保留在本机。此测试版尚未完成 Apple 公证，首次启动仍可能被系统拦截。
+This testing release is not Apple notarized. Clipboard history remains local and is preserved during updates.
+此测试版尚未完成 Apple 公证；历史保留在本机，更新时保留。
 ]]></description>
-            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.5.0/Pasteback-0.5.0-universal.zip" length="3156816" type="application/octet-stream" sparkle:edSignature="DFUT4WojTzKqpbQEsgbZQbRkpcFBhvWcMdNI56vUQNAx0ogoPNsP+Jpv6mnnYEa0eyFIv/eal/SDI84+wJ1gAg=="></enclosure>
+            <enclosure url="https://github.com/JohnSmitho91p8/Pasteback/releases/download/v0.5.1/Pasteback-0.5.1-universal.zip" length="3162366" type="application/octet-stream" sparkle:edSignature="rWUDIFI5m6mwCIybp/IBFC9TbFGGASxpdp2M0miGMumQPn/0pU91G+5L+ZT4KzoOw2mYaFJAAt5bu/C5eZPlAQ=="></enclosure>
         </item>
     </channel>
 </rss><!-- sparkle-signatures:
-edSignature: NKGmNPIFE+PZoWYXCmtrQq80vbojoWQueCEJfYYui6X08E3hkxWMUy/YiBBs8BVE1rcH1yWKuUvLzrWf5ZQvAQ==
-length: 2396
+edSignature: skM6lg3v6VkyxTYeD+ZrEeqb48qomzHp7UfDQ37cXqIBV2kxE+jfPN+GqvM1pd/yEcnxIj3v2offkJeCid6fDg==
+length: 1926
 -->
