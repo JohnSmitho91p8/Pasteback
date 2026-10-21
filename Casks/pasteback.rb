@@ -8,7 +8,7 @@ cask "pasteback" do
   homepage "https://github.com/JohnSmitho91p8/Pasteback"
 
   auto_updates true
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "Pasteback.app"
 end
