@@ -5,9 +5,12 @@ import Observation
 import ImageIO
 import UniformTypeIdentifiers
 
+extension Notification.Name { static let pastebackCopySucceeded = Notification.Name("PastebackCopySucceeded") }
+
 @MainActor @Observable final class ClipStore {
     let container: ModelContainer
     var items: [ClipItem] = []
+    var displayItems: [ClipItem] { items.filter(\.pinned) + items.filter { !$0.pinned } }
     var paused = false {
         didSet {
             captureGeneration += 1
@@ -123,7 +126,7 @@ import UniformTypeIdentifiers
                 error = tr("内容过大，未记录：图片最多128MB，文字最多2MB。")
                 return
             }
-            let capture = Capture(text: snapshot.text, image: snapshot.image, files: snapshot.files, source: source, bundle: bundle, date: date, generation: generation)
+            let capture = Capture(text: snapshot.text, image: snapshot.image, files: snapshot.files, source: snapshot.remote ? tr("通用剪贴板") : source, bundle: snapshot.remote ? "com.apple.universalclipboard" : bundle, date: date, generation: generation)
             guard pending.count < 32, pending.reduce(0, { $0 + $1.byteCount }) + capture.byteCount <= 256_000_000 else {
                 error = tr("待处理内容过多，请稍候再复制。")
                 return
@@ -206,6 +209,7 @@ import UniformTypeIdentifiers
             case .names: success = p.setString(files.map(\.name).joined(separator: "\n"), forType: .string)
             }
             if p.name == pasteboard.name { count = p.changeCount }
+            if success { NotificationCenter.default.post(name: .pastebackCopySucceeded, object: self) }
             return success
         }
         if let name = imageName {
@@ -214,6 +218,7 @@ import UniformTypeIdentifiers
             p.clearContents(); p.setData(data, forType: NSPasteboard.PasteboardType(UTType(filenameExtension: (name as NSString).pathExtension)?.identifier ?? UTType.png.identifier))
         } else { p.clearContents(); p.setString(text, forType: .string) }
         if p.name == pasteboard.name { count = p.changeCount }
+        NotificationCenter.default.post(name: .pastebackCopySucceeded, object: self)
         return true
     }
 
@@ -284,6 +289,7 @@ actor PasteboardReader {
         let emptyTypes: Bool
         var files: [FileReference] = []
         var truncated = false
+        var remote = false
     }
     func read(name: String, change: Int, includeImages: Bool) async -> Snapshot? {
         let board = NSPasteboard(name: NSPasteboard.Name(name))
@@ -297,7 +303,7 @@ actor PasteboardReader {
             let files = await FileReferenceService.shared.references(urls)
             guard board.changeCount == change else { return nil }
             if !files.isEmpty {
-                return Snapshot(text: "", image: nil, supported: true, sensitive: false, emptyTypes: false, files: files, truncated: urls.count > FileReferenceService.maximumFiles)
+                return Snapshot(text: "", image: nil, supported: true, sensitive: false, emptyTypes: false, files: files, truncated: urls.count > FileReferenceService.maximumFiles, remote: types.contains("com.apple.is-remote-clipboard"))
             }
         }
         let imageTypes: [NSPasteboard.PasteboardType] = [.png, .tiff, .init(UTType.jpeg.identifier), .init(UTType.heic.identifier), .init(UTType.gif.identifier), .init(UTType.webP.identifier)]
@@ -310,6 +316,6 @@ actor PasteboardReader {
             }
         }
         guard board.changeCount == change else { return nil }
-        return Snapshot(text: text, image: image, supported: supported, sensitive: false, emptyTypes: types.isEmpty)
+        return Snapshot(text: text, image: image, supported: supported, sensitive: false, emptyTypes: types.isEmpty, remote: types.contains("com.apple.is-remote-clipboard"))
     }
 }
