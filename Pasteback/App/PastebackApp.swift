@@ -10,6 +10,8 @@ import Carbon
 @MainActor @Observable final class WorkspaceNavigation {
     var settings = false
     var onboarding = false
+    var query = ""
+    var selection: UUID?
 }
 
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
@@ -52,8 +54,7 @@ import Carbon
             if !NSScreen.screens.contains(where: { $0.visibleFrame.intersects(panel.frame) }) { panel.center() }
         }
         panel.setFrameAutosaveName("PastebackWorkspace")
-        let root = WorkspaceView(quick: { [weak self] in self?.toggle() }, store: store, navigation: navigation, primary: { [weak self] item, mode in await self?.perform(item, mode: mode) ?? false }, close: { [weak self] in self?.panel.orderOut(nil) })
-        panel.contentView = NSHostingView(rootView: root)
+        panel.contentView = nil
         panel.delegate = self
         quickPanel = QuickPanel(contentRect: NSRect(x: 0, y: 0, width: 480, height: 540), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
         quickPanel.title = tr("快捷浮层")
@@ -116,7 +117,22 @@ import Carbon
             quickPanel.animator().alphaValue = 1
         }
     }
-    func hideQuick() { quickGeneration += 1; quickPanel?.orderOut(nil) }
+    func hideQuick() { quickGeneration += 1; quickPanel?.orderOut(nil); quickPanel?.contentView = nil }
+    private func ensureWorkspace() {
+        guard panel.contentView == nil else { return }
+        let root = WorkspaceView(quick: { [weak self] in self?.toggle() }, store: store, navigation: navigation, primary: { [weak self] item, mode in await self?.perform(item, mode: mode) ?? false }, close: { [weak self] in self?.closeWorkspace() })
+        panel.contentView = NSHostingView(rootView: root)
+    }
+    private func closeWorkspace() { panel.orderOut(nil); panel.contentView = nil }
+    func windowWillClose(_ notification: Notification) {
+        if let window = notification.object as? NSWindow, window === panel { panel.contentView = nil }
+    }
+    func windowDidMiniaturize(_ notification: Notification) {
+        if let window = notification.object as? NSWindow, window === panel { panel.contentView = nil }
+    }
+    func windowDidDeminiaturize(_ notification: Notification) {
+        if let window = notification.object as? NSWindow, window === panel { ensureWorkspace() }
+    }
     @objc private func copyFeedback() {
         flashTask?.cancel()
         status.button?.image = NSImage(systemSymbolName: "checkmark.square", accessibilityDescription: tr("已复制"))
@@ -135,7 +151,7 @@ import Carbon
         guard !quick || (generation == quickGeneration && quickPanel.isVisible) else { return false }
         if success {
             if quick { hideQuick() }
-            await PasteAction.shared.pasteIfEnabled { [weak self] in self?.hideQuick(); self?.panel.orderOut(nil) }
+            await PasteAction.shared.pasteIfEnabled { [weak self] in self?.hideQuick(); self?.closeWorkspace() }
         }
         return success
     }
@@ -146,6 +162,7 @@ import Carbon
         hideQuick()
         if NSWorkspace.shared.frontmostApplication?.bundleIdentifier != Bundle.main.bundleIdentifier { PasteAction.shared.rememberTarget(NSWorkspace.shared.frontmostApplication) }
         navigation.settings = false
+        ensureWorkspace()
         NSApp.activate(ignoringOtherApps: true)
         if panel.isMiniaturized { panel.deminiaturize(nil) }
         panel.makeKeyAndOrderFront(nil)
@@ -153,6 +170,7 @@ import Carbon
     @objc func showPreferences() {
         hideQuick()
         navigation.settings = true
+        ensureWorkspace()
         NSApp.activate(ignoringOtherApps: true)
         if panel.isMiniaturized { panel.deminiaturize(nil) }
         panel.makeKeyAndOrderFront(nil)
