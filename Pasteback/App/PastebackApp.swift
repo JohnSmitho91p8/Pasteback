@@ -11,6 +11,7 @@ import Carbon
     var settings = false
     var onboarding = false
     var query = ""
+    var category: ClipCategory = .all
     var selection: UUID?
 }
 
@@ -43,10 +44,12 @@ import Carbon
         status.button?.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: "Pasteback")
         status.button?.target = self; status.button?.action = #selector(statusClicked)
         status.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
-        panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1120, height: 740), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
+        panel = NSWindow(contentRect: NSRect(origin: .zero, size: DesignTokens.Metrics.defaultWindow), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         panel.title = "Pasteback"
+        panel.titleVisibility = .hidden
+        panel.toolbarStyle = .unified
         panel.isReleasedWhenClosed = false
-        panel.minSize = NSSize(width: 900, height: 580)
+        panel.minSize = DesignTokens.Metrics.minimumWindow
         panel.collectionBehavior = [.fullScreenPrimary]
         panel.tabbingMode = .disallowed
         panel.center()
