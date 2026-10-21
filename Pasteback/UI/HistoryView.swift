@@ -5,6 +5,7 @@ import ServiceManagement
 private enum ClearAction { case clipboard, all }
 
 struct WorkspaceView: View {
+    var quick: () -> Void = {}
     let store: ClipStore
     @Bindable var navigation: WorkspaceNavigation
     var primary: (ClipItem, ClipStore.CopyMode) async -> Bool
@@ -18,6 +19,7 @@ struct WorkspaceView: View {
                 }.padding(.vertical, 18)
                 Button { navigation.settings = false } label: { Label(tr("你的剪贴板"), systemImage: "doc.on.clipboard").frame(maxWidth: .infinity, alignment: .leading).padding(10) }
                     .buttonStyle(.plain).background(!navigation.settings ? Color.teal.opacity(0.13) : .clear, in: RoundedRectangle(cornerRadius: 8))
+                Button(action: quick) { Label(tr("快捷浮层"), systemImage: "rectangle.topthird.inset.filled").frame(maxWidth: .infinity, alignment: .leading).padding(10) }.buttonStyle(.plain)
                 Spacer()
                 Button { navigation.settings = true } label: { Label(tr("设置"), systemImage: "gearshape").frame(maxWidth: .infinity, alignment: .leading).padding(10) }
                     .buttonStyle(.plain).background(navigation.settings ? Color.teal.opacity(0.13) : .clear, in: RoundedRectangle(cornerRadius: 8))
@@ -26,9 +28,10 @@ struct WorkspaceView: View {
             ZStack {
                 HistoryView(store: store, primary: primary, close: close, settings: { navigation.settings = true })
                     .disabled(navigation.settings).opacity(navigation.settings ? 0 : 1).allowsHitTesting(!navigation.settings).accessibilityHidden(navigation.settings)
-                if navigation.settings { PreferencesView(back: { navigation.settings = false }, store: store).background(Color(nsColor: .windowBackgroundColor)) }
+                if navigation.settings { PreferencesView(back: { navigation.settings = false }, store: store, guide: { navigation.onboarding = true }).background(Color(nsColor: .windowBackgroundColor)) }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
         }.frame(minWidth: 900, minHeight: 540)
+        .sheet(isPresented: $navigation.onboarding) { PasteOnboardingView { UserDefaults.standard.set(true, forKey: "quickOnboardingComplete"); navigation.onboarding = false } }
         .environment(\.locale, AppLanguage.shared.locale)
     }
 }
@@ -45,7 +48,7 @@ struct HistoryView: View {
     @State private var clearAction: ClearAction = .clipboard
     @State private var confirmClear = false
     @FocusState private var searching: Bool
-    private var filtered: [ClipItem] { store.items.filter { query.isEmpty || $0.text.localizedCaseInsensitiveContains(query) || $0.source.localizedCaseInsensitiveContains(query) || $0.files.contains { $0.name.localizedCaseInsensitiveContains(query) || $0.path.localizedCaseInsensitiveContains(query) } } }
+    private var filtered: [ClipItem] { store.displayItems.filter { query.isEmpty || $0.text.localizedCaseInsensitiveContains(query) || $0.source.localizedCaseInsensitiveContains(query) || $0.files.contains { $0.name.localizedCaseInsensitiveContains(query) || $0.path.localizedCaseInsensitiveContains(query) } } }
     var body: some View {
         HSplitView {
         VStack(spacing: 0) {
@@ -81,6 +84,8 @@ struct HistoryView: View {
                     ScrollView {
                         LazyVStack(spacing: 5) {
                             ForEach(Array(filtered.enumerated()), id: \.element.id) { index, item in
+                                if index == 0 && item.pinned { Text(tr("固定")).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12).padding(.top, 5) }
+                                if !item.pinned && index > 0 && filtered[index - 1].pinned { Text(tr("最近记录")).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12).padding(.top, 8) }
                                 ClipRow(item: item, number: index < 9 ? index + 1 : nil, selected: selection == item.id, copy: { use(item) })
                                     .contentShape(Rectangle())
                                     .gesture(TapGesture(count: 2).exclusively(before: TapGesture(count: 1)).onEnded { gesture in
@@ -133,7 +138,7 @@ struct HistoryView: View {
         .environment(\.locale, AppLanguage.shared.locale)
         .onAppear { searching = true; selection = filtered.first?.id }
         .onChange(of: query) { selection = filtered.first?.id }
-        .onChange(of: store.items.map(\.id)) { _, _ in
+        .onChange(of: store.displayItems.map { "\($0.id)-\($0.pinned)" }) { _, _ in
             if !filtered.contains(where: { $0.id == selection }) { selection = filtered.first?.id }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
@@ -227,6 +232,7 @@ struct ClipRow: View {
 struct PreferencesView: View {
     var back: () -> Void
     @Bindable var store: ClipStore
+    var guide: () -> Void = {}
     @State private var confirmClear = false
     @State private var launch = SMAppService.mainApp.status == .enabled
     @State private var launchError: String?
@@ -266,7 +272,10 @@ struct PreferencesView: View {
                     do { if value { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() } }
                     catch { launchError = error.localizedDescription; launch = SMAppService.mainApp.status == .enabled }
                 }
-                LabeledContent(tr("呼出历史面板"), value: "⌘⇧V")
+                HStack { Text(tr("快捷浮层")); Spacer(); ShortcutRecorder().frame(width: 220, height: 26) }
+                Button(tr("恢复默认快捷键")) { GlobalShortcut.shared.reset() }
+                if let error = GlobalShortcut.shared.error { Text(error).font(.caption).foregroundStyle(.red) }
+                Button(tr("自动粘贴使用引导"), action: guide)
                 Text(tr("初版使用固定快捷键。回车复制后，切回原应用按 ⌘V 粘贴。自动粘贴与快捷键录制将在下一阶段接入。"))
                     .font(.caption).foregroundStyle(.secondary)
                 if let launchError { Text(launchError).foregroundStyle(.red) }
