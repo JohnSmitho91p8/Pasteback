@@ -1,6 +1,6 @@
 cask "pasteback" do
-  version "0.5.0"
-  sha256 "01cac89e4bfa572208644649056bbf6205c4f55710758e5aa8f5831eb8bbf477"
+  version "0.5.1"
+  sha256 "e70c209257df1587e90790873a44936147828d76e392338ae9eb1221f31770f8"
 
   url "https://github.com/JohnSmitho91p8/Pasteback/releases/download/v#{version}/Pasteback-#{version}-universal.dmg"
   name "Pasteback"
