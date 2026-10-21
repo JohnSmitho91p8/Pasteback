@@ -12,7 +12,7 @@ import Observation
     static let activationDelay: Duration = .milliseconds(90)
 
     func rememberTarget(_ app: NSRunningApplication?) {
-        guard let app, app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
+        guard let app, app.bundleIdentifier != Bundle.main.bundleIdentifier else { target = nil; targetGeneration += 1; return }
         target = app; targetGeneration += 1
     }
     static func allowed(enabled: Bool, trusted: Bool, secureInput: Bool, targetValid: Bool) -> Bool {

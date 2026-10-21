@@ -9,14 +9,17 @@ import Carbon
 
 @MainActor @Observable final class WorkspaceNavigation {
     var settings = false
+    var onboarding = false
 }
 
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var store: ClipStore!
     var status: NSStatusItem!
     var panel: NSWindow!
+    var quickPanel: QuickPanel!
+    private var quickGeneration = 0
+    private var flashTask: Task<Void, Never>?
     let navigation = WorkspaceNavigation()
-    var hotKey: EventHotKeyRef?
     var handler: EventHandlerRef?
     func applicationDidFinishLaunching(_ notification: Notification) {
         umask(0o077) // New databases, journals and images are private to this account.
@@ -49,9 +52,16 @@ import Carbon
             if !NSScreen.screens.contains(where: { $0.visibleFrame.intersects(panel.frame) }) { panel.center() }
         }
         panel.setFrameAutosaveName("PastebackWorkspace")
-        let root = WorkspaceView(store: store, navigation: navigation, primary: { [weak self] item, mode in await self?.perform(item, mode: mode) ?? false }, close: { [weak self] in self?.panel.orderOut(nil) })
+        let root = WorkspaceView(quick: { [weak self] in self?.toggle() }, store: store, navigation: navigation, primary: { [weak self] item, mode in await self?.perform(item, mode: mode) ?? false }, close: { [weak self] in self?.panel.orderOut(nil) })
         panel.contentView = NSHostingView(rootView: root)
         panel.delegate = self
+        quickPanel = QuickPanel(contentRect: NSRect(x: 0, y: 0, width: 480, height: 540), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        quickPanel.title = tr("快捷浮层")
+        quickPanel.isFloatingPanel = true; quickPanel.level = .floating
+        quickPanel.hidesOnDeactivate = false; quickPanel.isReleasedWhenClosed = false
+        quickPanel.isOpaque = false; quickPanel.backgroundColor = .clear; quickPanel.hasShadow = true
+        quickPanel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        quickPanel.dismissPanel = { [weak self] in self?.hideQuick() }
         var type = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
         InstallEventHandler(GetApplicationEventTarget(), { _, _, data in
             guard let data else { return noErr }
@@ -59,21 +69,25 @@ import Carbon
             Task { @MainActor in delegate.toggle() }
             return noErr
         }, 1, &type, Unmanaged.passUnretained(self).toOpaque(), &handler)
-        let result = RegisterEventHotKey(UInt32(kVK_ANSI_V), UInt32(cmdKey | shiftKey), EventHotKeyID(signature: 0x50415354, id: 1), GetApplicationEventTarget(), 0, &hotKey)
-        if result != noErr { store.error = tr("⌘⇧V 已被其他应用占用，请使用菜单栏打开。") }
+        GlobalShortcut.shared.start()
+        NotificationCenter.default.addObserver(self, selector: #selector(copyFeedback), name: .pastebackCopySucceeded, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(languageChanged), name: .pastebackLanguageChanged, object: nil)
-        toggle()
+        if !UserDefaults.standard.bool(forKey: "quickOnboardingComplete") {
+            navigation.onboarding = true
+            showHistory()
+        }
     }
     @objc private func languageChanged() { panel.title = "Pasteback" }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         guard panel != nil else { return false }
-        if !panel.isVisible { toggle() }
+        showHistory()
         return true
     }
     @objc func statusClicked() {
         if NSApp.currentEvent?.type == .rightMouseUp {
             let menu = NSMenu()
-            menu.addItem(withTitle: tr("打开 Pasteback  ⌘⇧V"), action: #selector(toggle), keyEquivalent: "")
+            menu.addItem(withTitle: tr("快捷浮层") + "  " + GlobalShortcut.shared.label, action: #selector(toggle), keyEquivalent: "")
+            menu.addItem(withTitle: tr("打开完整窗口"), action: #selector(showHistory), keyEquivalent: "")
             menu.addItem(withTitle: store.paused ? tr("继续记录") : tr("暂停记录"), action: #selector(pause), keyEquivalent: "")
             menu.addItem(.separator())
             menu.addItem(withTitle: tr("设置") + "…", action: #selector(showPreferences), keyEquivalent: ",")
@@ -81,36 +95,63 @@ import Carbon
             menu.addItem(withTitle: tr("退出 Pasteback"), action: #selector(quit), keyEquivalent: "q")
             for item in menu.items { item.target = self }
             status.menu = menu; status.button?.performClick(nil); status.menu = nil
-        } else { toggle() }
+        } else { showHistory() }
     }
     @objc func toggle() {
-        if panel.isMiniaturized { panel.deminiaturize(nil); panel.makeKeyAndOrderFront(nil); return }
-        if !panel.isVisible { PasteAction.shared.rememberTarget(NSWorkspace.shared.frontmostApplication) }
-        if panel.isVisible { panel.orderOut(nil); return }
-        if !NSScreen.screens.contains(where: { $0.visibleFrame.intersects(panel.frame) }) { panel.center() }
-        if panel.isMiniaturized { panel.deminiaturize(nil) }
+        if quickPanel.isVisible { hideQuick(); return }
+        quickGeneration += 1
+        PasteAction.shared.rememberTarget(NSWorkspace.shared.frontmostApplication)
+        let screen = NSScreen.screens.first(where: { $0.frame.contains(NSEvent.mouseLocation) }) ?? NSScreen.main
+        guard let area = screen?.visibleFrame else { return }
+        let rows = min(store.displayItems.count, 8)
+        let height = min(540, max(240, 116 + rows * 54 + (store.items.contains(where: \.pinned) ? 32 : 0)))
+        quickPanel.setContentSize(NSSize(width: min(480, area.width - 24), height: min(CGFloat(height), area.height - 24)))
+        quickPanel.setFrameOrigin(NSPoint(x: area.midX - quickPanel.frame.width / 2, y: area.midY - quickPanel.frame.height / 2))
+        quickPanel.contentView = NSHostingView(rootView: QuickAccessView(store: store, session: UUID(), use: { [weak self] item, mode in await self?.perform(item, mode: mode, quick: true) ?? false }, openWorkspace: { [weak self] in self?.showHistory() }, close: { [weak self] in self?.hideQuick() }))
         store.poll()
-        NSApp.activate(ignoringOtherApps: true); panel.makeKeyAndOrderFront(nil)
+        quickPanel.alphaValue = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 1 : 0
+        quickPanel.makeKeyAndOrderFront(nil) // Do not activate Pasteback: the destination app stays active.
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 0 : 0.10
+            quickPanel.animator().alphaValue = 1
+        }
+    }
+    func hideQuick() { quickGeneration += 1; quickPanel?.orderOut(nil) }
+    @objc private func copyFeedback() {
+        flashTask?.cancel()
+        status.button?.image = NSImage(systemSymbolName: "checkmark.square", accessibilityDescription: tr("已复制"))
+        flashTask = Task { [weak self] in
+            do { try await Task.sleep(for: .milliseconds(220)) } catch { return }
+            self?.status.button?.image = NSImage(systemSymbolName: "square.on.square", accessibilityDescription: "Pasteback")
+        }
     }
     private var performingAction = false
-    func perform(_ item: ClipItem, mode: ClipStore.CopyMode = .content) async -> Bool {
+    func perform(_ item: ClipItem, mode: ClipStore.CopyMode = .content, quick: Bool = false) async -> Bool {
         guard !performingAction else { return false }
         performingAction = true
         defer { performingAction = false }
+        let generation = quickGeneration
         let success = await store.copy(item, mode: mode)
-        if success { await PasteAction.shared.pasteIfEnabled { [weak self] in self?.panel.orderOut(nil) } }
+        guard !quick || (generation == quickGeneration && quickPanel.isVisible) else { return false }
+        if success {
+            if quick { hideQuick() }
+            await PasteAction.shared.pasteIfEnabled { [weak self] in self?.hideQuick(); self?.panel.orderOut(nil) }
+        }
         return success
     }
     @objc func checkForUpdates() { Task { await UpdateChecker.shared.check() } }
     @objc func pause() { store.paused.toggle() }
     @objc func quit() { NSApp.terminate(nil) }
-    func showHistory() {
+    @objc func showHistory() {
+        hideQuick()
+        if NSWorkspace.shared.frontmostApplication?.bundleIdentifier != Bundle.main.bundleIdentifier { PasteAction.shared.rememberTarget(NSWorkspace.shared.frontmostApplication) }
         navigation.settings = false
         NSApp.activate(ignoringOtherApps: true)
         if panel.isMiniaturized { panel.deminiaturize(nil) }
         panel.makeKeyAndOrderFront(nil)
     }
     @objc func showPreferences() {
+        hideQuick()
         navigation.settings = true
         NSApp.activate(ignoringOtherApps: true)
         if panel.isMiniaturized { panel.deminiaturize(nil) }
