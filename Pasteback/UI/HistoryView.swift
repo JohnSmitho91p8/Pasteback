@@ -11,27 +11,14 @@ struct WorkspaceView: View {
     var primary: (ClipItem, ClipStore.CopyMode) async -> Bool
     var close: () -> Void
     var body: some View {
-        HStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Image(nsImage: NSApplication.shared.applicationIconImage).resizable().frame(width: 28, height: 28)
-                    Text("Pasteback").font(.title3.bold())
-                }.padding(.vertical, 18)
-                Button { navigation.settings = false } label: { Label(tr("你的剪贴板"), systemImage: "doc.on.clipboard").frame(maxWidth: .infinity, alignment: .leading).padding(10) }
-                    .buttonStyle(.plain).background(!navigation.settings ? Color.teal.opacity(0.13) : .clear, in: RoundedRectangle(cornerRadius: 8))
-                Button(action: quick) { Label(tr("快捷浮层"), systemImage: "rectangle.topthird.inset.filled").frame(maxWidth: .infinity, alignment: .leading).padding(10) }.buttonStyle(.plain)
-                Spacer()
-                Button { navigation.settings = true } label: { Label(tr("设置"), systemImage: "gearshape").frame(maxWidth: .infinity, alignment: .leading).padding(10) }
-                    .buttonStyle(.plain).background(navigation.settings ? Color.teal.opacity(0.13) : .clear, in: RoundedRectangle(cornerRadius: 8))
-            }.padding(14).frame(width: 180).background(.regularMaterial)
-            Divider()
-            ZStack {
-                HistoryView(store: store, navigation: navigation, primary: primary, close: close, settings: { navigation.settings = true })
-                    .disabled(navigation.settings).opacity(navigation.settings ? 0 : 1).allowsHitTesting(!navigation.settings).accessibilityHidden(navigation.settings)
-                if navigation.settings { PreferencesView(back: { navigation.settings = false }, store: store, guide: { navigation.onboarding = true }).background(Color(nsColor: .windowBackgroundColor)) }
-            }.frame(maxWidth: .infinity, maxHeight: .infinity)
-        }.frame(minWidth: 900, minHeight: 540)
-        .sheet(isPresented: $navigation.onboarding) { PasteOnboardingView { UserDefaults.standard.set(true, forKey: "quickOnboardingComplete"); navigation.onboarding = false } }
+        HistoryView(store: store, navigation: navigation, primary: primary, close: close, settings: { navigation.settings = true })
+            .frame(minWidth: DesignTokens.Metrics.minimumWindow.width, minHeight: DesignTokens.Metrics.minimumWindow.height)
+            .sheet(isPresented: $navigation.settings) {
+                PreferencesView(back: { navigation.settings = false }, store: store, guide: { navigation.settings = false; navigation.onboarding = true })
+                    .frame(width: 640, height: 560)
+            }
+            .sheet(isPresented: $navigation.onboarding) { PasteOnboardingView { UserDefaults.standard.set(true, forKey: "quickOnboardingComplete"); navigation.onboarding = false } }
+
         .environment(\.locale, AppLanguage.shared.locale)
     }
 }
@@ -46,101 +33,37 @@ struct HistoryView: View {
     @State private var preview: ClipItem?
     @State private var clearAction: ClearAction = .clipboard
     @State private var confirmClear = false
-    @FocusState private var searching: Bool
-    private var filtered: [ClipItem] { store.displayItems.filter { navigation.query.isEmpty || $0.text.localizedCaseInsensitiveContains(navigation.query) || $0.source.localizedCaseInsensitiveContains(navigation.query) || $0.files.contains { $0.name.localizedCaseInsensitiveContains(navigation.query) || $0.path.localizedCaseInsensitiveContains(navigation.query) } } }
+    @State private var searching = false
+    @FocusState private var listFocused: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private var categorized: [ClipItem] { store.displayItems.filter { matches($0, category: navigation.category) } }
+    private func matches(_ item: ClipItem, category: ClipCategory) -> Bool {
+        category == .all || (category == .pinned ? item.pinned : ClipPresentationCache.shared.kind(item) == category)
+    }
+    private var filtered: [ClipItem] { categorized.filter { navigation.query.isEmpty || $0.text.localizedCaseInsensitiveContains(navigation.query) || $0.source.localizedCaseInsensitiveContains(navigation.query) || $0.files.contains { $0.name.localizedCaseInsensitiveContains(navigation.query) || $0.path.localizedCaseInsensitiveContains(navigation.query) } } }
     var body: some View {
-        HSplitView {
         VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                Image(nsImage: NSApplication.shared.applicationIconImage).resizable().scaledToFit().frame(width: 26, height: 26)
-                Text("Pasteback").font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .help(tr("按住顶部标题或空白处拖动窗口"))
-                Spacer()
-                Circle().fill(store.paused ? Color.orange : .teal).frame(width: 6, height: 6)
-                Text(store.paused ? tr("已暂停") : (store.processing ? tr("正在导入…") : tr("正在记录"))).font(.caption).foregroundStyle(.secondary)
-                Button(action: settings) { Image(systemName: "gearshape") }.buttonStyle(.plain).help(tr("设置")).accessibilityLabel(tr("设置"))
-            }.padding(.horizontal, 20).padding(.top, 20).padding(.bottom, 16)
-            HStack(spacing: 9) {
-                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                TextField(tr("搜索复制过的内容…"), text: $navigation.query).textFieldStyle(.plain).focused($searching)
-                if !navigation.query.isEmpty { Button { navigation.query = "" } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.plain) }
-            }.padding(11).background(.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 10)).padding(.horizontal, 16)
-            HStack {
-                Text(navigation.query.isEmpty ? tr("你的剪贴板") : tr("搜索结果")).font(.system(size: 11, weight: .medium))
-                if navigation.query.isEmpty { Text(tr("最近复制在前")).font(.system(size: 10)) }
-                Spacer(); Text(trCount(filtered.count)).font(.system(size: 11, design: .monospaced))
-            }.foregroundStyle(.secondary).padding(.horizontal, 21).padding(.top, 19).padding(.bottom, 8)
+            Group {
             if filtered.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: navigation.query.isEmpty ? "doc.on.clipboard" : "magnifyingglass").font(.system(size: 36, weight: .ultraLight)).foregroundStyle(.teal)
-                    Text(navigation.query.isEmpty ? tr("复制一下，随时找回。") : tr("没有找到相关内容")).font(.headline)
-                    Text(navigation.query.isEmpty ? tr("复制文字或图片后，它们会出现在这里。\n所有历史仅保存在这台 Mac。") : tr("试试其他文字或应用名称。"))
-                        .font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.center).lineSpacing(5)
-                }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                NavigationSplitView { sidebar } detail: { historyList.toolbar { settingsToolbar } }
             } else {
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(spacing: 5) {
-                            ForEach(Array(filtered.enumerated()), id: \.element.id) { index, item in
-                                if index == 0 && item.pinned { Text(tr("固定")).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12).padding(.top, 5) }
-                                if !item.pinned && index > 0 && filtered[index - 1].pinned { Text(tr("最近记录")).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12).padding(.top, 8) }
-                                ClipRow(item: item, number: index < 9 ? index + 1 : nil, selected: navigation.selection == item.id, copy: { use(item) })
-                                    .contentShape(Rectangle())
-                                    .gesture(TapGesture(count: 2).exclusively(before: TapGesture(count: 1)).onEnded { gesture in
-                                        navigation.selection = item.id
-                                        switch gesture {
-                                        case .first: activate(item)
-                                        case .second: break
-                                        }
-                                    })
-                                    .contextMenu {
-                                        Button(tr("复制到剪贴板")) { use(item) }
-                                        if !item.files.isEmpty {
-                                            Button(tr("复制路径")) { use(item, mode: .paths) }
-                                            Button(tr("复制文件名")) { use(item, mode: .names) }
-                                            Button(tr("在Finder中显示")) { NSWorkspace.shared.activateFileViewerSelecting(item.files.map(\.url)) }
-                                        }
-                                        Button(item.pinned ? tr("取消固定") : tr("固定")) { store.pin(item) }
-                                        Button(tr("删除"), role: .destructive) { store.remove(item) }
-                                    }.id(item.id)
-                            }
-                        }.padding(.horizontal, 10).padding(.bottom, 12)
-                    }.onChange(of: navigation.selection) { _, value in proxy.scrollTo(value) }
-                }
+                NavigationSplitView { sidebar } content: { historyList.navigationSplitViewColumnWidth(min: 240, ideal: 310, max: 440) } detail: { detail.toolbar { settingsToolbar } }
             }
-            Divider()
-            HStack(spacing: 12) {
-                Text(copied ? tr("已复制，切回应用按 ⌘V 粘贴") : tr("点击查看 · ↩ 复制 · ⌘P 固定"))
-                Spacer()
-                Menu {
-                    Button(tr("清空当前剪贴板…"), role: .destructive) { clearAction = .clipboard; confirmClear = true }
-                    Button(tr("清空历史和剪贴板…"), role: .destructive) { clearAction = .all; confirmClear = true }
-                } label: { Image(systemName: "trash").accessibilityLabel(tr("清理")) }
-                    .menuStyle(.borderlessButton).fixedSize().help(tr("清理"))
-            }.font(.system(size: 10)).foregroundStyle(.secondary).padding(.horizontal, 18).frame(height: 37)
-            if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding(8) }
         }
-        .frame(minWidth: 300, idealWidth: 360, maxWidth: 460, maxHeight: .infinity).background(Color(nsColor: .controlBackgroundColor))
-        Group {
-            if let item = filtered.first(where: { $0.id == navigation.selection }) {
-                ClipDetailView(item: item, store: store, embedded: true).id(item.id)
-            } else {
-                VStack(spacing: 14) {
-                    Image(systemName: "doc.text.magnifyingglass").font(.system(size: 38, weight: .ultraLight)).foregroundStyle(.teal)
-                    Text(tr("复制一下，随时找回。")).font(.headline)
-                }.frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-        }.frame(minWidth: 340, maxWidth: .infinity, maxHeight: .infinity)
+            statusBar
         }
-        .background(Color(nsColor: .windowBackgroundColor))
+        .searchable(text: $navigation.query, isPresented: $searching, placement: .toolbar, prompt: tr("搜索复制过的内容…"))
+        .animation(reduceMotion ? nil : DesignTokens.animation, value: filtered.isEmpty)
+        .background(DesignTokens.ColorStyle.window)
         .environment(\.locale, AppLanguage.shared.locale)
         .onAppear { searching = true; if !filtered.contains(where: { $0.id == navigation.selection }) { navigation.selection = filtered.first?.id } }
         .onChange(of: navigation.query) { navigation.selection = filtered.first?.id }
+        .onChange(of: navigation.category) { navigation.selection = filtered.first?.id }
         .onChange(of: store.displayItems.map { "\($0.id)-\($0.pinned)" }) { _, _ in
             if !filtered.contains(where: { $0.id == navigation.selection }) { navigation.selection = filtered.first?.id }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
+            guard !navigation.settings && !navigation.onboarding else { return }
             searching = true
             if navigation.selection == nil { navigation.selection = filtered.first?.id }
         }
@@ -162,9 +85,18 @@ struct HistoryView: View {
             Text(clearAction == .clipboard ? tr("只清空当前系统剪贴板，历史记录仍然保留。") : tr("删除全部历史（包括固定项）并清空当前系统剪贴板，无法撤销。"))
         }
         .sheet(item: $preview) { item in ClipDetailView(item: item, store: store) }
-        .onExitCommand(perform: close)
+        .onExitCommand { navigation.query = ""; searching = false; listFocused = true }
         .background {
+            WorkspaceSearchKeys(focusSearch: {
+                searching = false
+                Task { @MainActor in await Task.yield(); searching = true }
+            }, move: move, activate: { paths in
+                if let item = filtered.first(where: { $0.id == navigation.selection }) {
+                    activate(item, mode: paths && !item.files.isEmpty ? .paths : .content)
+                }
+            }, escape: { navigation.query = ""; searching = false; listFocused = true })
             Group {
+                Button("") { searching = true }.keyboardShortcut("f")
                 ForEach(1...9, id: \.self) { number in
                     Button("") {
                         guard preview == nil, filtered.indices.contains(number - 1) else { return }
@@ -175,6 +107,107 @@ struct HistoryView: View {
                 Button("") { if let item = filtered.first(where: { $0.id == navigation.selection }) { store.pin(item) } }.keyboardShortcut("p")
                 Button("") { if let item = filtered.first(where: { $0.id == navigation.selection }) { store.remove(item); navigation.selection = filtered.first?.id } }.keyboardShortcut(.delete)
             }.hidden()
+        }
+    }
+    @ToolbarContentBuilder private var settingsToolbar: some ToolbarContent {
+        ToolbarItem(placement: .principal) { Spacer() }
+        ToolbarItem(placement: .primaryAction) {
+            Button(action: settings) { Image(systemName: "gearshape") }
+                .help(tr("设置")).accessibilityLabel(tr("设置")).keyboardShortcut(",")
+        }
+    }
+    private var sidebar: some View {
+        List(selection: Binding<ClipCategory?>(get: { navigation.category }, set: { if let value = $0 { navigation.category = value } })) {
+            ForEach(ClipCategory.allCases) { category in
+                HStack {
+                    Label(category.title, systemImage: category.symbol)
+                    Spacer()
+                    Text(String(store.items.filter { matches($0, category: category) }.count))
+                        .monospacedDigit().foregroundStyle(.secondary)
+                }.tag(category).padding(.vertical, DesignTokens.Space.xs)
+            }
+        }.listStyle(.sidebar)
+            .navigationSplitViewColumnWidth(min: 140, ideal: 160, max: 200)
+    }
+    private var historyList: some View {
+        VStack(spacing: 0) {
+            if filtered.isEmpty {
+                VStack(spacing: DesignTokens.Space.md) {
+                    Image(systemName: navigation.query.isEmpty ? "doc.on.clipboard" : "magnifyingglass").font(.system(size: DesignTokens.Metrics.emptySymbol)).foregroundStyle(.secondary)
+                    Text(!navigation.query.isEmpty ? tr("没有找到匹配的内容") : (store.items.isEmpty ? tr("复制一下，随时找回。") : tr("这个分类还没有内容"))).font(DesignTokens.TypeStyle.title)
+                    Text(!navigation.query.isEmpty ? tr("试试其他文字或应用名称。") : (store.items.isEmpty ? tr("复制文字或图片后，它们会出现在这里。\n所有历史仅保存在这台 Mac。") : tr("选择其他分类，或复制新的内容。")))
+                        .font(DesignTokens.TypeStyle.body).foregroundStyle(.secondary).multilineTextAlignment(.center).lineSpacing(5)
+                    if navigation.query.isEmpty && store.items.isEmpty {
+                        Text(GlobalShortcut.shared.label + " " + tr("呼出快捷浮层"))
+                            .font(DesignTokens.TypeStyle.shortcut)
+                            .padding(DesignTokens.Space.sm).background(.quaternary, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.small))
+                    }
+                }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(spacing: DesignTokens.Space.xs) {
+                            ForEach(Array(filtered.enumerated()), id: \.element.id) { index, item in
+                                if index == 0 && item.pinned { Text(tr("固定")).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, DesignTokens.Space.md).padding(.top, DesignTokens.Space.xs) }
+                                if !item.pinned && index > 0 && filtered[index - 1].pinned { Text(tr("最近记录")).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, DesignTokens.Space.md).padding(.top, DesignTokens.Space.sm) }
+                                ClipRow(item: item, number: index < 9 ? index + 1 : nil, selected: navigation.selection == item.id, copy: { use(item) })
+                                    .contentShape(Rectangle())
+                                    .gesture(TapGesture(count: 2).exclusively(before: TapGesture(count: 1)).onEnded { gesture in
+                                        navigation.selection = item.id
+                                        switch gesture {
+                                        case .first: activate(item)
+                                        case .second: break
+                                        }
+                                    })
+                                    .contextMenu {
+                                        Button(tr("复制到剪贴板")) { use(item) }
+                                        if !item.files.isEmpty {
+                                            Button(tr("复制路径")) { use(item, mode: .paths) }
+                                            Button(tr("复制文件名")) { use(item, mode: .names) }
+                                            Button(tr("在Finder中显示")) { NSWorkspace.shared.activateFileViewerSelecting(item.files.map(\.url)) }
+                                        }
+                                        Button(item.pinned ? tr("取消固定") : tr("固定")) { store.pin(item) }
+                                        Button(tr("删除"), role: .destructive) { store.remove(item) }
+                                    }.id(item.id)
+                            }
+                        }.padding(.horizontal, DesignTokens.Space.sm).padding(.bottom, DesignTokens.Space.md)
+                    }.focusable().focused($listFocused)
+                    .onChange(of: navigation.selection) { _, value in proxy.scrollTo(value) }
+                }
+            }
+
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(DesignTokens.ColorStyle.content)
+    }
+    private var statusBar: some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack(spacing: DesignTokens.Space.md) {
+                Button { store.paused.toggle() } label: {
+                    HStack(spacing: DesignTokens.Space.xs) {
+                        Circle().fill(store.paused ? Color.secondary : .green).frame(width: 6, height: 6)
+                        Text(store.paused ? tr("已暂停") : tr("正在记录"))
+                    }
+                }.buttonStyle(.plain).help(store.paused ? tr("继续记录") : tr("暂停记录"))
+                ViewThatFits(in: .horizontal) {
+                    Text(copied ? tr("已复制，切回应用按 ⌘V 粘贴") : tr("点击查看 · ↩ 复制 · ⌘P 固定")).lineLimit(1)
+                    Color.clear.frame(width: 0, height: 0)
+                }
+                Spacer()
+                Text(trCount(store.items.count)).monospacedDigit().fixedSize()
+                Menu {
+                    Button(tr("清空当前剪贴板…"), role: .destructive) { clearAction = .clipboard; confirmClear = true }
+                    Button(tr("清空历史和剪贴板…"), role: .destructive) { clearAction = .all; confirmClear = true }
+                } label: { Image(systemName: "trash").accessibilityLabel(tr("清理")) }
+                    .menuStyle(.borderlessButton).fixedSize().help(tr("清理"))
+            }.font(DesignTokens.TypeStyle.caption).foregroundStyle(.secondary).padding(.horizontal, DesignTokens.Space.lg).frame(height: DesignTokens.Metrics.statusHeight)
+            if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding(DesignTokens.Space.sm) }
+        }.background(.bar)
+    }
+    @ViewBuilder private var detail: some View {
+        if let item = filtered.first(where: { $0.id == navigation.selection }) ?? filtered.first {
+            ClipDetailView(item: item, store: store, embedded: true).id(item.id)
+                .frame(minWidth: 280, maxWidth: .infinity, maxHeight: .infinity)
         }
     }
     private func activate(_ item: ClipItem, mode: ClipStore.CopyMode = .content) { Task { copied = await primary(item, mode) } }
@@ -192,26 +225,32 @@ struct ClipRow: View {
     let selected: Bool
     var copy: () -> Void
     @State private var filesAvailable = true
+    @State private var hovering = false
+    private var kind: ClipCategory { ClipPresentationCache.shared.kind(item) }
+    private var domain: String? { kind == .link ? URL(string: item.text.trimmingCharacters(in: .whitespacesAndNewlines))?.host : nil }
     var body: some View {
-        HStack(alignment: .top, spacing: 11) {
-            if let number { Text(String(number)).font(.system(size: 10, design: .monospaced)).foregroundStyle(.tertiary).frame(width: 8) }
-            Image(nsImage: AppIconCache.shared.icon(item.sourceID))
-                .resizable().frame(width: 25, height: 25).padding(.top, 3)
-            VStack(alignment: .leading, spacing: 7) {
-                if let first = item.files.first {
-                    if item.files.count > 1 { Text(String(format: tr("文件数量"), item.files.count)).font(.caption) }
-                    FileReferenceRow(file: first)
-                } else if let name = item.imageName {
-                    ClipThumbnail(name: name).frame(maxWidth: 270, maxHeight: 90)
-                } else { Text(String(item.text.prefix(240))).font(.system(size: 13)).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading) }
-                HStack(spacing: 5) {
-                    Text(trFormat("来源格式", item.source)); Text("·"); Text(item.date, style: .relative)
-                    Spacer()
-                    if item.pinned { Image(systemName: "pin.fill").foregroundStyle(.teal) }
-                    if item.imageName != nil { Image(systemName: "photo") }
-                }.font(.system(size: 10)).foregroundStyle(.secondary)
+        HStack(alignment: .center, spacing: DesignTokens.Space.md) {
+            Group {
+                if let name = item.imageName { ClipThumbnail(name: name) }
+                else { Image(systemName: item.files.isEmpty ? kind.symbol : "doc").font(.system(size: 18)).foregroundStyle(.secondary) }
+            }.frame(width: DesignTokens.Metrics.thumbnail, height: DesignTokens.Metrics.thumbnail).clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.small))
+            VStack(alignment: .leading, spacing: DesignTokens.Space.xs) {
+                HStack(alignment: .top, spacing: DesignTokens.Space.xs) {
+                    Text(item.files.first?.name ?? (item.imageName == nil ? (domain.map { $0 + "\n" } ?? "") + String(item.text.prefix(240)) : tr("图片内容")))
+                        .font(DesignTokens.TypeStyle.body).foregroundStyle(kind == .link ? Color.accentColor : .primary)
+                        .lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
+                    if item.pinned { Image(systemName: "pin.fill").font(DesignTokens.TypeStyle.caption).foregroundStyle(.secondary).accessibilityLabel(tr("已固定")) }
+                }
+                HStack(spacing: DesignTokens.Space.xs) {
+                    Image(nsImage: AppIconCache.shared.icon(item.sourceID)).resizable().frame(width: 12, height: 12).accessibilityHidden(true)
+                    Text(item.source).lineLimit(1)
+                    Text("·")
+                    TimelineView(.periodic(from: .now, by: 60)) { context in
+                        Text(relativeDate(at: context.date)).lineLimit(1)
+                    }
+                }.font(DesignTokens.TypeStyle.caption).foregroundStyle(.secondary)
             }
-            Button(action: copy) { Image(systemName: "doc.on.doc").frame(width: 24, height: 28) }
+            Button(action: copy) { Image(systemName: "doc.on.doc").frame(width: 20, height: 24) }
                 .disabled(!filesAvailable).buttonStyle(.borderless).help(tr("复制整条内容")).accessibilityLabel(tr("复制整条内容"))
         }.task(id: item.filesData) {
             let files = item.files
@@ -222,9 +261,18 @@ struct ClipRow: View {
                 filesAvailable = exists
                 do { try await Task.sleep(for: .seconds(2)) } catch { return }
             }
-        }.padding(11).frame(maxWidth: .infinity, alignment: .leading)
-            .background(selected ? Color.teal.opacity(0.11) : Color.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 10))
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(selected ? Color.teal.opacity(0.22) : .clear, lineWidth: 1))
+        }.padding(.horizontal, DesignTokens.Space.md).padding(.vertical, DesignTokens.Space.sm).frame(minHeight: DesignTokens.Metrics.rowHeight)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(selected ? DesignTokens.ColorStyle.selection : (hovering ? DesignTokens.ColorStyle.hover : .clear), in: RoundedRectangle(cornerRadius: DesignTokens.Radius.card))
+            .onHover { hovering = $0 }
+            .animation(DesignTokens.animation, value: hovering)
+    }
+    private func relativeDate(at now: Date) -> String {
+        if now.timeIntervalSince(item.date) < 60 { return tr("刚刚") }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.locale = AppLanguage.shared.locale
+        formatter.unitsStyle = .short
+        return formatter.localizedString(for: item.date, relativeTo: now)
     }
 }
 
@@ -247,7 +295,7 @@ struct PreferencesView: View {
                 Spacer()
                 Text(tr("设置")).font(.headline)
                 Spacer()
-            }.padding(.horizontal, 20).padding(.vertical, 12)
+            }.padding(.horizontal, 20).padding(.vertical, DesignTokens.Space.md)
             Divider()
             Form {
             Section(tr("通用")) {
@@ -275,8 +323,6 @@ struct PreferencesView: View {
                 Button(tr("恢复默认快捷键")) { GlobalShortcut.shared.reset() }
                 if let error = GlobalShortcut.shared.error { Text(error).font(.caption).foregroundStyle(.red) }
                 Button(tr("自动粘贴使用引导"), action: guide)
-                Text(tr("初版使用固定快捷键。回车复制后，切回原应用按 ⌘V 粘贴。自动粘贴与快捷键录制将在下一阶段接入。"))
-                    .font(.caption).foregroundStyle(.secondary)
                 if let launchError { Text(launchError).foregroundStyle(.red) }
             }
             Section(tr("版本与更新")) {
@@ -331,7 +377,7 @@ struct ClipThumbnail: View {
         Group {
             if let image { Image(decorative: image, scale: 2).resizable().scaledToFit() }
             else { Image(systemName: "photo").foregroundStyle(.secondary).frame(height: 64) }
-        }.clipShape(RoundedRectangle(cornerRadius: 6))
+        }.clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.small))
         .task(id: name) { image = await ThumbnailLoader.shared.load(name) }
     }
 }
@@ -355,14 +401,20 @@ struct ClipDetailView: View {
         text = item.text; imageName = item.imageName; source = item.source; files = item.files
     }
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: DesignTokens.Space.lg) {
             HStack {
                 Text(!files.isEmpty ? tr("文件内容") : imageName == nil ? tr("文字内容") : tr("图片内容")).font(.headline)
                 Spacer()
                 if !embedded { Button(tr("完成")) { dismiss() }.keyboardShortcut(.cancelAction) }
             }
+            HStack(spacing: DesignTokens.Space.sm) {
+                Image(nsImage: AppIconCache.shared.icon(item.sourceID)).resizable().frame(width: 14, height: 14)
+                Text(source).lineLimit(1)
+                Text("·")
+                Text(item.date.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened).locale(AppLanguage.shared.locale)))
+            }.font(DesignTokens.TypeStyle.secondary).foregroundStyle(.secondary)
             if !files.isEmpty {
-                ScrollView { LazyVStack(alignment: .leading, spacing: 12) { ForEach(files, id: \.path) { FileReferenceRow(file: $0) } } }
+                ScrollView { LazyVStack(alignment: .leading, spacing: DesignTokens.Space.md) { ForEach(files, id: \.path) { FileReferenceRow(file: $0) } } }
                 Button(tr("复制路径")) { Task { copied = await store.copy(item, mode: .paths) } }
                 Text(tr("删除记录只移除引用，不删除原文件。")).font(.caption).foregroundStyle(.secondary)
             } else if let name = imageName {
@@ -372,13 +424,18 @@ struct ClipDetailView: View {
             }
             Text(!files.isEmpty ? tr("文件只保存引用，原文件移动或删除后需重新复制。") : imageName == nil ? tr("拖选文字后按 ⌘C 可复制选中部分。") : tr("点击下方按钮复制原始图片。"))
                 .font(.caption).foregroundStyle(.secondary)
-            Text(trFormat("来源格式", source)).font(.caption).foregroundStyle(.secondary)
             HStack {
                 Button(role: .destructive) { confirmDelete = true } label: { Label(tr("删除"), systemImage: "trash") }
                     .buttonStyle(.bordered)
+                Button { store.pin(item) } label: {
+                    ViewThatFits(in: .horizontal) {
+                        Label(item.pinned ? tr("取消固定") : tr("固定"), systemImage: item.pinned ? "pin.slash" : "pin").fixedSize()
+                        Image(systemName: item.pinned ? "pin.slash" : "pin")
+                    }
+                }.buttonStyle(.bordered).help(item.pinned ? tr("取消固定") : tr("固定")).accessibilityLabel(item.pinned ? tr("取消固定") : tr("固定"))
                 Spacer()
                 Button(copied ? tr("已复制 ✓") : tr("复制全部")) { Task { copied = await store.copy(item) } }
-                    .disabled(!filesAvailable).buttonStyle(.borderedProminent).tint(.teal)
+                    .disabled(!filesAvailable).buttonStyle(.borderedProminent).tint(.accentColor)
             }
         }.task {
             guard !files.isEmpty else { return }
@@ -388,11 +445,58 @@ struct ClipDetailView: View {
                 filesAvailable = exists
                 do { try await Task.sleep(for: .seconds(2)) } catch { return }
             }
-        }.padding(24).frame(maxWidth: .infinity, maxHeight: .infinity)
+        }.padding(DesignTokens.Space.xl).frame(maxWidth: .infinity, maxHeight: .infinity)
         .environment(\.locale, AppLanguage.shared.locale)
         .alert(tr("删除这条历史？"), isPresented: $confirmDelete) {
             Button(tr("取消"), role: .cancel) {}
             Button(tr("删除"), role: .destructive) { store.remove(item); if !embedded { dismiss() } }
         } message: { Text(tr("删除说明")) }
+    }
+}
+
+/// SwiftUI's toolbar search is an NSSearchField outside the content focus tree.
+/// Route only its navigation keys, scoped to this hosting window; leave IME input intact.
+private struct WorkspaceSearchKeys: NSViewRepresentable {
+    var focusSearch: () -> Void
+    var move: (Int) -> Void
+    var activate: (Bool) -> Void
+    var escape: () -> Void
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        context.coordinator.view = view
+        context.coordinator.monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak coordinator = context.coordinator] event in
+            guard let coordinator, let window = coordinator.view?.window,
+                  event.window === window, window.isKeyWindow, window.attachedSheet == nil else { return event }
+            if event.modifierFlags.intersection([.command, .control, .option]) == .command,
+               event.charactersIgnoringModifiers?.lowercased() == "f" {
+                coordinator.actions.focusSearch()
+                if let field = window.toolbar?.items.compactMap({ ($0 as? NSSearchToolbarItem)?.searchField }).first { window.makeFirstResponder(field) }
+                return nil
+            }
+            guard event.modifierFlags.intersection([.command, .control]).isEmpty,
+                  let editor = window.firstResponder as? NSTextView, editor.isFieldEditor,
+                  editor.delegate is NSSearchField, !editor.hasMarkedText() else { return event }
+            switch event.keyCode {
+            case 125: coordinator.actions.move(1)
+            case 126: coordinator.actions.move(-1)
+            case 36, 76: coordinator.actions.activate(event.modifierFlags.contains(.option))
+            case 53: coordinator.actions.escape()
+            default: return event
+            }
+            return nil
+        }
+        return view
+    }
+    func updateNSView(_ view: NSView, context: Context) { context.coordinator.actions = self }
+    static func dismantleNSView(_ view: NSView, coordinator: Coordinator) {
+        if let monitor = coordinator.monitor { NSEvent.removeMonitor(monitor) }
+        coordinator.monitor = nil
+    }
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+    final class Coordinator {
+        weak var view: NSView?
+        var monitor: Any?
+        var actions: WorkspaceSearchKeys
+        init(_ actions: WorkspaceSearchKeys) { self.actions = actions }
     }
 }

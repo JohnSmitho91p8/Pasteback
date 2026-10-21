@@ -142,24 +142,23 @@ struct CppTextPreview: NSViewRepresentable {
         let key = (colorScheme == .dark ? "dark" : "light") + result.text
         guard context.coordinator.key != key else { return }
         context.coordinator.key = key
-        let dark = colorScheme == .dark
-        let background = dark ? NSColor(srgbRed: 0.12, green: 0.12, blue: 0.12, alpha: 1) : NSColor(srgbRed: 0.98, green: 0.98, blue: 0.98, alpha: 1)
-        let foreground = dark ? NSColor(srgbRed: 0.83, green: 0.83, blue: 0.83, alpha: 1) : NSColor(srgbRed: 0.15, green: 0.15, blue: 0.15, alpha: 1)
+        let background = NSColor.textBackgroundColor
+        let foreground = NSColor.labelColor
         let font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
         let style = NSMutableParagraphStyle(); style.minimumLineHeight = 20; style.maximumLineHeight = 20
         style.tabStops = []; style.defaultTabInterval = (" " as NSString).size(withAttributes: [.font: font]).width * 4
         let attributed = NSMutableAttributedString(string: result.text, attributes: [.font: font, .foregroundColor: foreground, .paragraphStyle: style])
         for token in result.tokens {
-            let rgb: (CGFloat, CGFloat, CGFloat)
+            let color: NSColor
             switch token.kind {
-            case .comment: rgb = dark ? (0.42,0.60,0.33) : (0.0,0.45,0.12)
-            case .string: rgb = dark ? (0.81,0.57,0.47) : (0.64,0.19,0.13)
-            case .keyword: rgb = dark ? (0.77,0.53,0.75) : (0.53,0.0,0.64)
-            case .type, .directive: rgb = dark ? (0.34,0.61,0.84) : (0.0,0.25,0.75)
-            case .number: rgb = dark ? (0.71,0.81,0.66) : (0.04,0.49,0.33)
-            case .function: rgb = dark ? (0.86,0.86,0.67) : (0.45,0.30,0.06)
+            case .comment: color = .systemGreen
+            case .string: color = .systemRed
+            case .keyword: color = .systemPurple
+            case .type, .directive: color = .systemBlue
+            case .number: color = .systemTeal
+            case .function: color = .systemOrange
             }
-            attributed.addAttribute(.foregroundColor, value: NSColor(srgbRed: rgb.0, green: rgb.1, blue: rgb.2, alpha: 1), range: token.range)
+            attributed.addAttribute(.foregroundColor, value: color, range: token.range)
         }
         view.backgroundColor = background; scroll.backgroundColor = background
         view.textStorage?.setAttributedString(attributed)

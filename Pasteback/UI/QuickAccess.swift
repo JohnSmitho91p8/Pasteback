@@ -102,15 +102,15 @@ struct QuickAccessView: View {
                             HStack(spacing: 10) {
                                 Text(String(index + 1)).font(.system(.caption2, design: .monospaced)).foregroundStyle(.tertiary).frame(width: 16)
                                 if let image = item.imageName { ClipThumbnail(name: image).frame(width: 36, height: 32) }
-                                else { Image(systemName: item.files.isEmpty ? "doc.text" : "folder").foregroundStyle(.teal).frame(width: 26) }
+                                else { Image(systemName: item.files.isEmpty ? "doc.text" : "folder").foregroundStyle(Color.accentColor).frame(width: 26) }
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text(item.files.first?.name ?? (item.imageName == nil ? String(item.text.prefix(100)) : tr("图片内容"))).lineLimit(1).font(.system(size: 13))
                                     Text(item.source).font(.caption2).foregroundStyle(.secondary)
                                 }
                                 Spacer()
-                                if item.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(.teal) }
+                                if item.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Color.accentColor) }
                             }.padding(10).frame(maxWidth: .infinity, alignment: .leading)
-                                .background(selection == item.id ? Color.teal.opacity(0.13) : .clear, in: RoundedRectangle(cornerRadius: 8))
+                                .background(selection == item.id ? DesignTokens.ColorStyle.selection : .clear, in: RoundedRectangle(cornerRadius: 8))
                                 .contentShape(Rectangle()).onTapGesture { selection = item.id; activate(item) }
                                 .id(item.id)
                         }
@@ -154,11 +154,11 @@ struct PasteOnboardingView: View {
     @State private var demo = false
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Image(systemName: "doc.on.clipboard").font(.system(size: 36, weight: .light)).foregroundStyle(.teal)
+            Image(systemName: "doc.on.clipboard").font(.system(size: 36, weight: .light)).foregroundStyle(Color.accentColor)
             Text(tr("选中，粘贴，继续工作。")).font(.title2.bold())
             Text(tr("快捷浮层帮你找回内容。开启辅助功能后，回车可粘贴回原应用；历史始终只在本机。")).foregroundStyle(.secondary)
             if paste.enabled {
-                Label(tr("自动粘贴已就绪"), systemImage: "checkmark.circle.fill").foregroundStyle(.teal)
+                Label(tr("自动粘贴已就绪"), systemImage: "checkmark.circle.fill").foregroundStyle(Color.accentColor)
                 if demo {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(tr("操作示例")).font(.caption).foregroundStyle(.secondary)
@@ -168,7 +168,7 @@ struct PasteOnboardingView: View {
                 }
             } else {
                 Text(tr("权限仅用于向原应用发送粘贴快捷键，可随时关闭。也可以暂时只复制。")).font(.callout)
-                Button(tr("开启自动粘贴")) { requested = true; paste.setEnabled(true); if paste.enabled { demo = true } }.buttonStyle(.borderedProminent).tint(.teal)
+                Button(tr("开启自动粘贴")) { requested = true; paste.setEnabled(true); if paste.enabled { demo = true } }.buttonStyle(.borderedProminent).tint(.accentColor)
             }
             HStack {
                 Button(tr("暂时只复制")) { done() }
