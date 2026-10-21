@@ -472,12 +472,12 @@
     "ko": "알 수 없는 앱"
   },
   "最近复制在前": {
-    "en": "Newest first",
-    "zh-Hans": "最近复制在前",
-    "ja": "新しい順",
-    "fr": "Plus récent d’abord",
-    "de": "Neueste zuerst",
-    "ko": "최신순"
+    "zh-Hans": "固定优先，其余最近在前",
+    "en": "Pinned first, then newest",
+    "ja": "固定を優先、その後新しい順",
+    "fr": "Épinglés, puis les plus récents",
+    "de": "Angeheftete zuerst, dann neueste",
+    "ko": "고정 항목 우선, 나머지는 최신순"
   },
   "清理": {
     "en": "Clear",
@@ -942,5 +942,165 @@
     "fr": "Aperçu limité à 100 000 caractères. Tout copier conserve le contenu intégral.",
     "de": "Vorschau auf 100.000 Zeichen begrenzt. Alles kopieren erhält den vollständigen Inhalt.",
     "ko": "미리보기는 10만 자로 제한됩니다. 전체 복사는 모든 내용을 유지합니다."
+  },
+  "快捷浮层": {
+    "zh-Hans": "快捷浮层",
+    "en": "Quick panel",
+    "ja": "クイックパネル",
+    "fr": "Panneau rapide",
+    "de": "Schnellfenster",
+    "ko": "빠른 패널"
+  },
+  "打开完整窗口": {
+    "zh-Hans": "打开完整窗口",
+    "en": "Open full window",
+    "ja": "メインウインドウを開く",
+    "fr": "Ouvrir la fenêtre complète",
+    "de": "Hauptfenster öffnen",
+    "ko": "전체 창 열기"
+  },
+  "恢复默认快捷键": {
+    "zh-Hans": "恢复默认快捷键",
+    "en": "Restore default shortcut",
+    "ja": "標準ショートカットに戻す",
+    "fr": "Rétablir le raccourci",
+    "de": "Standardkurzbefehl wiederherstellen",
+    "ko": "기본 단축키 복원"
+  },
+  "自动粘贴使用引导": {
+    "zh-Hans": "自动粘贴使用引导",
+    "en": "Automatic paste guide",
+    "ja": "自動ペーストのガイド",
+    "fr": "Guide du collage automatique",
+    "de": "Anleitung zum automatischen Einfügen",
+    "ko": "자동 붙여넣기 안내"
+  },
+  "快捷键已被占用，保留原快捷键。可使用菜单栏打开。": {
+    "zh-Hans": "快捷键已被占用，保留原快捷键。可使用菜单栏打开。",
+    "en": "Shortcut unavailable. Your previous shortcut is kept. Use the menu bar to open Pasteback.",
+    "ja": "使用できないショートカットです。元の設定を保持します。メニューバーから開けます。",
+    "fr": "Raccourci indisponible. Le précédent est conservé. Utilisez la barre des menus.",
+    "de": "Kurzbefehl nicht verfügbar. Der bisherige bleibt erhalten. Über die Menüleiste öffnen.",
+    "ko": "단축키를 사용할 수 없습니다. 이전 단축키가 유지됩니다. 메뉴 막대를 이용하세요."
+  },
+  "请包含 Command、Control 或 Option 修饰键。": {
+    "zh-Hans": "请包含 Command、Control 或 Option 修饰键。",
+    "en": "Include Command, Control or Option.",
+    "ja": "Command、Control、Optionのいずれかを含めてください。",
+    "fr": "Incluez Command, Control ou Option.",
+    "de": "Command, Control oder Option einschließen.",
+    "ko": "Command, Control 또는 Option을 포함하세요."
+  },
+  "按下新快捷键，Esc 取消": {
+    "zh-Hans": "按下新快捷键，Esc 取消",
+    "en": "Press shortcut; Esc cancels",
+    "ja": "キーを押す・Escで取消",
+    "fr": "Appuyez ; Échap annule",
+    "de": "Kurzbefehl drücken; Esc bricht ab",
+    "ko": "단축키 입력 · Esc 취소"
+  },
+  "↑↓ 选择 · ↩ 粘贴 · Esc 关闭": {
+    "zh-Hans": "↑↓ 选择 · ↩ 粘贴 · Esc 关闭",
+    "en": "↑↓ select · ↩ paste · Esc close",
+    "ja": "↑↓ 選択 · ↩ ペースト · Esc 閉じる",
+    "fr": "↑↓ choisir · ↩ coller · Échap fermer",
+    "de": "↑↓ wählen · ↩ einfügen · Esc schließen",
+    "ko": "↑↓ 선택 · ↩ 붙여넣기 · Esc 닫기"
+  },
+  "↑↓ 选择 · ↩ 复制 · Esc 关闭": {
+    "zh-Hans": "↑↓ 选择 · ↩ 复制 · Esc 关闭",
+    "en": "↑↓ select · ↩ copy · Esc close",
+    "ja": "↑↓ 選択 · ↩ コピー · Esc 閉じる",
+    "fr": "↑↓ choisir · ↩ copier · Échap fermer",
+    "de": "↑↓ wählen · ↩ kopieren · Esc schließen",
+    "ko": "↑↓ 선택 · ↩ 복사 · Esc 닫기"
+  },
+  "选中，粘贴，继续工作。": {
+    "zh-Hans": "选中，粘贴，继续工作。",
+    "en": "Choose. Paste. Keep going.",
+    "ja": "選んで、ペーストして、作業を続ける。",
+    "fr": "Choisissez. Collez. Continuez.",
+    "de": "Auswählen. Einfügen. Weiterarbeiten.",
+    "ko": "선택하고 붙여넣고 계속하세요."
+  },
+  "快捷浮层帮你找回内容。开启辅助功能后，回车可粘贴回原应用；历史始终只在本机。": {
+    "zh-Hans": "快捷浮层帮你找回内容。开启辅助功能后，回车可粘贴回原应用；历史始终只在本机。",
+    "en": "Find content in the quick panel. Enable Accessibility to paste back into your previous app with Return. History stays on this Mac.",
+    "ja": "クイックパネルで履歴を検索。アクセシビリティを許可するとReturnで元のアプリへペーストできます。履歴はこのMacに保存されます。",
+    "fr": "Retrouvez vos copies dans le panneau rapide. Autorisez Accessibilité pour coller dans l’app précédente avec Entrée. L’historique reste sur ce Mac.",
+    "de": "Inhalte im Schnellfenster finden. Bedienungshilfen erlauben das Einfügen mit Return in die vorige App. Der Verlauf bleibt auf diesem Mac.",
+    "ko": "빠른 패널에서 내용을 찾으세요. 손쉬운 사용을 허용하면 Return으로 이전 앱에 붙여넣습니다. 기록은 이 Mac에만 저장됩니다."
+  },
+  "自动粘贴已就绪": {
+    "zh-Hans": "自动粘贴已就绪",
+    "en": "Automatic paste is ready",
+    "ja": "自動ペーストの準備完了",
+    "fr": "Collage automatique prêt",
+    "de": "Automatisches Einfügen bereit",
+    "ko": "자동 붙여넣기 준비 완료"
+  },
+  "操作示例": {
+    "zh-Hans": "操作示例",
+    "en": "Example workflow",
+    "ja": "操作例",
+    "fr": "Exemple",
+    "de": "Beispiel",
+    "ko": "사용 예시"
+  },
+  "呼出浮层，选中内容，回车粘贴，浮层消失。": {
+    "zh-Hans": "呼出浮层，选中内容，回车粘贴，浮层消失。",
+    "en": "Open the panel, choose an item, press Return to paste and dismiss.",
+    "ja": "パネルを開き、項目を選び、Returnでペーストして閉じます。",
+    "fr": "Ouvrez le panneau, choisissez, puis Entrée pour coller et fermer.",
+    "de": "Fenster öffnen, Eintrag wählen, Return zum Einfügen und Schließen.",
+    "ko": "패널을 열고 항목을 선택한 뒤 Return으로 붙여넣으면 닫힙니다."
+  },
+  "权限仅用于向原应用发送粘贴快捷键，可随时关闭。也可以暂时只复制。": {
+    "zh-Hans": "权限仅用于向原应用发送粘贴快捷键，可随时关闭。也可以暂时只复制。",
+    "en": "Permission is used to send Paste to your previous app. You can disable it anytime or keep copy-only mode.",
+    "ja": "権限は元のアプリにペーストを送るために使用します。いつでも無効化でき、コピーのみでも使えます。",
+    "fr": "L’autorisation sert à envoyer Coller à l’app précédente. Vous pouvez la désactiver ou choisir la copie seule.",
+    "de": "Die Berechtigung sendet Einfügen an die vorige App. Jederzeit abschaltbar; nur Kopieren ist ebenfalls möglich.",
+    "ko": "권한은 이전 앱에 붙여넣기 단축키를 보내는 데 사용됩니다. 언제든 끄거나 복사 전용으로 사용할 수 있습니다."
+  },
+  "开启自动粘贴": {
+    "zh-Hans": "开启自动粘贴",
+    "en": "Enable automatic paste",
+    "ja": "自動ペーストを有効にする",
+    "fr": "Activer le collage automatique",
+    "de": "Automatisches Einfügen aktivieren",
+    "ko": "자동 붙여넣기 켜기"
+  },
+  "暂时只复制": {
+    "zh-Hans": "暂时只复制",
+    "en": "Copy only for now",
+    "ja": "今はコピーのみ",
+    "fr": "Copier seulement",
+    "de": "Vorerst nur kopieren",
+    "ko": "지금은 복사만"
+  },
+  "开始使用": {
+    "zh-Hans": "开始使用",
+    "en": "Get started",
+    "ja": "使い始める",
+    "fr": "Commencer",
+    "de": "Loslegen",
+    "ko": "시작하기"
+  },
+  "通用剪贴板": {
+    "zh-Hans": "通用剪贴板",
+    "en": "Universal Clipboard",
+    "ja": "ユニバーサルクリップボード",
+    "fr": "Presse-papiers universel",
+    "de": "Universelle Zwischenablage",
+    "ko": "공통 클립보드"
+  },
+  "最近记录": {
+    "zh-Hans": "最近记录",
+    "en": "Recent",
+    "ja": "最近の履歴",
+    "fr": "Récents",
+    "de": "Zuletzt",
+    "ko": "최근 기록"
   }
 }
