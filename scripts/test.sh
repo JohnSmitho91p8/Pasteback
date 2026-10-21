@@ -22,3 +22,6 @@ swiftc -O -swift-version 5 Pasteback/Storage/HistorySchema.swift Pasteback/Stora
 
 swiftc -O -parse-as-library -swift-version 5 Pasteback/App/Localization.swift Pasteback/UI/CppPreview.swift Tests/CppPreviewTests.swift -o "$output_dir/CppPreview"
 "$output_dir/CppPreview"
+
+swiftc -O -swift-version 5 Pasteback/App/Localization.swift Pasteback/Storage/HistorySchema.swift Pasteback/Storage/FileReferences.swift Pasteback/UI/ClipPresentation.swift Tests/WorkspacePresentationTests.swift -o "$output_dir/WorkspacePresentation"
+"$output_dir/WorkspacePresentation"
