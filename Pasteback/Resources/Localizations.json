@@ -1102,5 +1102,93 @@
     "fr": "Récents",
     "de": "Zuletzt",
     "ko": "최근 기록"
+  },
+  "全部": {
+    "en": "All",
+    "ja": "すべて",
+    "fr": "Tout",
+    "de": "Alle",
+    "ko": "전체",
+    "zh-Hans": "全部"
+  },
+  "文本": {
+    "en": "Text",
+    "ja": "テキスト",
+    "fr": "Texte",
+    "de": "Text",
+    "ko": "텍스트",
+    "zh-Hans": "文本"
+  },
+  "图片": {
+    "en": "Images",
+    "ja": "画像",
+    "fr": "Images",
+    "de": "Bilder",
+    "ko": "이미지",
+    "zh-Hans": "图片"
+  },
+  "链接": {
+    "en": "Links",
+    "ja": "リンク",
+    "fr": "Liens",
+    "de": "Links",
+    "ko": "링크",
+    "zh-Hans": "链接"
+  },
+  "代码": {
+    "en": "Code",
+    "ja": "コード",
+    "fr": "Code",
+    "de": "Code",
+    "ko": "코드",
+    "zh-Hans": "代码"
+  },
+  "已固定": {
+    "en": "Pinned",
+    "ja": "固定済み",
+    "fr": "Épinglés",
+    "de": "Angeheftet",
+    "ko": "고정됨",
+    "zh-Hans": "已固定"
+  },
+  "没有找到匹配的内容": {
+    "en": "No matching content",
+    "ja": "一致する内容がありません",
+    "fr": "Aucun contenu correspondant",
+    "de": "Keine passenden Inhalte",
+    "ko": "일치하는 내용이 없습니다",
+    "zh-Hans": "没有找到匹配的内容"
+  },
+  "这个分类还没有内容": {
+    "en": "This category is empty",
+    "ja": "このカテゴリは空です",
+    "fr": "Cette catégorie est vide",
+    "de": "Diese Kategorie ist leer",
+    "ko": "이 분류는 비어 있습니다",
+    "zh-Hans": "这个分类还没有内容"
+  },
+  "选择其他分类，或复制新的内容。": {
+    "en": "Choose another category, or copy something new.",
+    "ja": "別のカテゴリを選ぶか、新しい内容をコピーしてください。",
+    "fr": "Choisissez une autre catégorie ou copiez du contenu.",
+    "de": "Andere Kategorie wählen oder neue Inhalte kopieren.",
+    "ko": "다른 분류를 선택하거나 새 내용을 복사하세요.",
+    "zh-Hans": "选择其他分类，或复制新的内容。"
+  },
+  "呼出快捷浮层": {
+    "en": "Open quick access",
+    "ja": "クイックアクセスを開く",
+    "fr": "Ouvrir l’accès rapide",
+    "de": "Schnellzugriff öffnen",
+    "ko": "빠른 접근 열기",
+    "zh-Hans": "呼出快捷浮层"
+  },
+  "刚刚": {
+    "en": "Just now",
+    "ja": "たった今",
+    "fr": "À l’instant",
+    "de": "Gerade eben",
+    "ko": "방금",
+    "zh-Hans": "刚刚"
   }
 }
