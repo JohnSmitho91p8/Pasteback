@@ -26,7 +26,7 @@ struct WorkspaceView: View {
             }.padding(14).frame(width: 180).background(.regularMaterial)
             Divider()
             ZStack {
-                HistoryView(store: store, primary: primary, close: close, settings: { navigation.settings = true })
+                HistoryView(store: store, navigation: navigation, primary: primary, close: close, settings: { navigation.settings = true })
                     .disabled(navigation.settings).opacity(navigation.settings ? 0 : 1).allowsHitTesting(!navigation.settings).accessibilityHidden(navigation.settings)
                 if navigation.settings { PreferencesView(back: { navigation.settings = false }, store: store, guide: { navigation.onboarding = true }).background(Color(nsColor: .windowBackgroundColor)) }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -38,17 +38,16 @@ struct WorkspaceView: View {
 
 struct HistoryView: View {
     @Bindable var store: ClipStore
+    @Bindable var navigation: WorkspaceNavigation
     var primary: (ClipItem, ClipStore.CopyMode) async -> Bool
     var close: () -> Void
     var settings: () -> Void
-    @State private var query = ""
-    @State private var selection: UUID?
     @State private var copied = false
     @State private var preview: ClipItem?
     @State private var clearAction: ClearAction = .clipboard
     @State private var confirmClear = false
     @FocusState private var searching: Bool
-    private var filtered: [ClipItem] { store.displayItems.filter { query.isEmpty || $0.text.localizedCaseInsensitiveContains(query) || $0.source.localizedCaseInsensitiveContains(query) || $0.files.contains { $0.name.localizedCaseInsensitiveContains(query) || $0.path.localizedCaseInsensitiveContains(query) } } }
+    private var filtered: [ClipItem] { store.displayItems.filter { navigation.query.isEmpty || $0.text.localizedCaseInsensitiveContains(navigation.query) || $0.source.localizedCaseInsensitiveContains(navigation.query) || $0.files.contains { $0.name.localizedCaseInsensitiveContains(navigation.query) || $0.path.localizedCaseInsensitiveContains(navigation.query) } } }
     var body: some View {
         HSplitView {
         VStack(spacing: 0) {
@@ -64,19 +63,19 @@ struct HistoryView: View {
             }.padding(.horizontal, 20).padding(.top, 20).padding(.bottom, 16)
             HStack(spacing: 9) {
                 Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                TextField(tr("搜索复制过的内容…"), text: $query).textFieldStyle(.plain).focused($searching)
-                if !query.isEmpty { Button { query = "" } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.plain) }
+                TextField(tr("搜索复制过的内容…"), text: $navigation.query).textFieldStyle(.plain).focused($searching)
+                if !navigation.query.isEmpty { Button { navigation.query = "" } label: { Image(systemName: "xmark.circle.fill") }.buttonStyle(.plain) }
             }.padding(11).background(.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 10)).padding(.horizontal, 16)
             HStack {
-                Text(query.isEmpty ? tr("你的剪贴板") : tr("搜索结果")).font(.system(size: 11, weight: .medium))
-                if query.isEmpty { Text(tr("最近复制在前")).font(.system(size: 10)) }
+                Text(navigation.query.isEmpty ? tr("你的剪贴板") : tr("搜索结果")).font(.system(size: 11, weight: .medium))
+                if navigation.query.isEmpty { Text(tr("最近复制在前")).font(.system(size: 10)) }
                 Spacer(); Text(trCount(filtered.count)).font(.system(size: 11, design: .monospaced))
             }.foregroundStyle(.secondary).padding(.horizontal, 21).padding(.top, 19).padding(.bottom, 8)
             if filtered.isEmpty {
                 VStack(spacing: 12) {
-                    Image(systemName: query.isEmpty ? "doc.on.clipboard" : "magnifyingglass").font(.system(size: 36, weight: .ultraLight)).foregroundStyle(.teal)
-                    Text(query.isEmpty ? tr("复制一下，随时找回。") : tr("没有找到相关内容")).font(.headline)
-                    Text(query.isEmpty ? tr("复制文字或图片后，它们会出现在这里。\n所有历史仅保存在这台 Mac。") : tr("试试其他文字或应用名称。"))
+                    Image(systemName: navigation.query.isEmpty ? "doc.on.clipboard" : "magnifyingglass").font(.system(size: 36, weight: .ultraLight)).foregroundStyle(.teal)
+                    Text(navigation.query.isEmpty ? tr("复制一下，随时找回。") : tr("没有找到相关内容")).font(.headline)
+                    Text(navigation.query.isEmpty ? tr("复制文字或图片后，它们会出现在这里。\n所有历史仅保存在这台 Mac。") : tr("试试其他文字或应用名称。"))
                         .font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.center).lineSpacing(5)
                 }.frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
@@ -86,10 +85,10 @@ struct HistoryView: View {
                             ForEach(Array(filtered.enumerated()), id: \.element.id) { index, item in
                                 if index == 0 && item.pinned { Text(tr("固定")).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12).padding(.top, 5) }
                                 if !item.pinned && index > 0 && filtered[index - 1].pinned { Text(tr("最近记录")).font(.caption2).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12).padding(.top, 8) }
-                                ClipRow(item: item, number: index < 9 ? index + 1 : nil, selected: selection == item.id, copy: { use(item) })
+                                ClipRow(item: item, number: index < 9 ? index + 1 : nil, selected: navigation.selection == item.id, copy: { use(item) })
                                     .contentShape(Rectangle())
                                     .gesture(TapGesture(count: 2).exclusively(before: TapGesture(count: 1)).onEnded { gesture in
-                                        selection = item.id
+                                        navigation.selection = item.id
                                         switch gesture {
                                         case .first: activate(item)
                                         case .second: break
@@ -107,7 +106,7 @@ struct HistoryView: View {
                                     }.id(item.id)
                             }
                         }.padding(.horizontal, 10).padding(.bottom, 12)
-                    }.onChange(of: selection) { _, value in proxy.scrollTo(value) }
+                    }.onChange(of: navigation.selection) { _, value in proxy.scrollTo(value) }
                 }
             }
             Divider()
@@ -124,7 +123,7 @@ struct HistoryView: View {
         }
         .frame(minWidth: 300, idealWidth: 360, maxWidth: 460, maxHeight: .infinity).background(Color(nsColor: .controlBackgroundColor))
         Group {
-            if let item = filtered.first(where: { $0.id == selection }) {
+            if let item = filtered.first(where: { $0.id == navigation.selection }) {
                 ClipDetailView(item: item, store: store, embedded: true).id(item.id)
             } else {
                 VStack(spacing: 14) {
@@ -136,19 +135,19 @@ struct HistoryView: View {
         }
         .background(Color(nsColor: .windowBackgroundColor))
         .environment(\.locale, AppLanguage.shared.locale)
-        .onAppear { searching = true; selection = filtered.first?.id }
-        .onChange(of: query) { selection = filtered.first?.id }
+        .onAppear { searching = true; if !filtered.contains(where: { $0.id == navigation.selection }) { navigation.selection = filtered.first?.id } }
+        .onChange(of: navigation.query) { navigation.selection = filtered.first?.id }
         .onChange(of: store.displayItems.map { "\($0.id)-\($0.pinned)" }) { _, _ in
-            if !filtered.contains(where: { $0.id == selection }) { selection = filtered.first?.id }
+            if !filtered.contains(where: { $0.id == navigation.selection }) { navigation.selection = filtered.first?.id }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
             searching = true
-            if selection == nil { selection = filtered.first?.id }
+            if navigation.selection == nil { navigation.selection = filtered.first?.id }
         }
         .onKeyPress(.downArrow) { move(1); return .handled }
         .onKeyPress(.upArrow) { move(-1); return .handled }
         .onKeyPress(.return, phases: .down) { press in
-            if let item = filtered.first(where: { $0.id == selection }) {
+            if let item = filtered.first(where: { $0.id == navigation.selection }) {
                 activate(item, mode: press.modifiers.contains(.option) && !item.files.isEmpty ? .paths : .content)
             }
             return .handled
@@ -156,7 +155,7 @@ struct HistoryView: View {
         .alert(clearAction == .clipboard ? tr("清空当前剪贴板？") : tr("清空历史和剪贴板？"), isPresented: $confirmClear) {
             Button(tr("取消"), role: .cancel) {}
             Button(tr("清空"), role: .destructive) {
-                if clearAction == .all { store.clear(); preview = nil; selection = nil }
+                if clearAction == .all { store.clear(); preview = nil; navigation.selection = nil }
                 store.clearClipboard(); copied = false
             }
         } message: {
@@ -169,12 +168,12 @@ struct HistoryView: View {
                 ForEach(1...9, id: \.self) { number in
                     Button("") {
                         guard preview == nil, filtered.indices.contains(number - 1) else { return }
-                        selection = filtered[number - 1].id
+                        navigation.selection = filtered[number - 1].id
                         activate(filtered[number - 1])
                     }.keyboardShortcut(KeyEquivalent(Character(String(number))), modifiers: .command)
                 }
-                Button("") { if let item = filtered.first(where: { $0.id == selection }) { store.pin(item) } }.keyboardShortcut("p")
-                Button("") { if let item = filtered.first(where: { $0.id == selection }) { store.remove(item); selection = filtered.first?.id } }.keyboardShortcut(.delete)
+                Button("") { if let item = filtered.first(where: { $0.id == navigation.selection }) { store.pin(item) } }.keyboardShortcut("p")
+                Button("") { if let item = filtered.first(where: { $0.id == navigation.selection }) { store.remove(item); navigation.selection = filtered.first?.id } }.keyboardShortcut(.delete)
             }.hidden()
         }
     }
@@ -182,8 +181,8 @@ struct HistoryView: View {
     private func use(_ item: ClipItem, mode: ClipStore.CopyMode = .content) { Task { copied = await store.copy(item, mode: mode) } }
     private func move(_ offset: Int) {
         guard !filtered.isEmpty else { return }
-        let index = filtered.firstIndex(where: { $0.id == selection }) ?? 0
-        selection = filtered[min(max(index + offset, 0), filtered.count - 1)].id
+        let index = filtered.firstIndex(where: { $0.id == navigation.selection }) ?? 0
+        navigation.selection = filtered[min(max(index + offset, 0), filtered.count - 1)].id
     }
 }
 
